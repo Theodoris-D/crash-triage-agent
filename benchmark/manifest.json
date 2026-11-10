@@ -1,0 +1,98 @@
+[
+  {
+    "id": "c01_stack_buffer_overflow",
+    "title": "Unbounded strcpy into a fixed stack buffer",
+    "cwe": "CWE-121",
+    "crash_class": "stack-buffer-overflow",
+    "signal": "SIGABRT",
+    "root_cause_line": 12
+  },
+  {
+    "id": "c02_heap_buffer_overflow",
+    "title": "One-byte write past a heap allocation",
+    "cwe": "CWE-122",
+    "crash_class": "heap-buffer-overflow",
+    "signal": "SIGABRT",
+    "root_cause_line": 13
+  },
+  {
+    "id": "c03_use_after_free",
+    "title": "Read through a pointer after it is freed",
+    "cwe": "CWE-416",
+    "crash_class": "heap-use-after-free",
+    "signal": "SIGABRT",
+    "root_cause_line": 11
+  },
+  {
+    "id": "c04_double_free",
+    "title": "Conditional path frees the same pointer twice",
+    "cwe": "CWE-415",
+    "crash_class": "double-free",
+    "signal": "SIGABRT",
+    "root_cause_line": 13
+  },
+  {
+    "id": "c05_null_pointer_deref",
+    "title": "Dereference of a lookup miss that returns NULL",
+    "cwe": "CWE-476",
+    "crash_class": "SEGV",
+    "signal": "SIGSEGV",
+    "root_cause_line": 19
+  },
+  {
+    "id": "c06_divide_by_zero",
+    "title": "Integer division by an untrusted zero divisor",
+    "cwe": "CWE-369",
+    "crash_class": "integer-divide-by-zero",
+    "signal": "SIGFPE",
+    "root_cause_line": 11
+  },
+  {
+    "id": "c07_stack_exhaustion_recursion",
+    "title": "Unbounded recursion exhausts the stack",
+    "cwe": "CWE-674",
+    "crash_class": "stack-overflow",
+    "signal": "SIGSEGV",
+    "root_cause_line": 12
+  },
+  {
+    "id": "c08_out_of_bounds_read",
+    "title": "Array read indexed by an untrusted value",
+    "cwe": "CWE-125",
+    "crash_class": "global-buffer-overflow",
+    "signal": "SIGABRT",
+    "root_cause_line": 9
+  },
+  {
+    "id": "c09_integer_overflow_alloc",
+    "title": "Allocation size computed with an overflowing multiply",
+    "cwe": "CWE-190",
+    "crash_class": "heap-buffer-overflow",
+    "signal": "SIGABRT",
+    "root_cause_line": 10
+  },
+  {
+    "id": "c10_off_by_one_loop",
+    "title": "Copy loop runs one iteration too far",
+    "cwe": "CWE-193",
+    "crash_class": "stack-buffer-overflow",
+    "signal": "SIGABRT",
+    "root_cause_line": 13
+  },
+  {
+    "id": "c11_negative_memcpy_size",
+    "title": "Signed length flows into memcpy as a huge size_t",
+    "cwe": "CWE-195",
+    "crash_class": "memcpy-overflow",
+    "signal": "SIGABRT",
+    "root_cause_line": 11
+  },
+  {
+    "id": "c12_untrusted_array_index_write",
+    "title": "Write to a stack slot at an untrusted negative index",
+    "cwe": "CWE-129",
+    "crash_class": "stack-buffer-overflow",
+    "signal": "SIGABRT",
+    "root_cause_line": 12
+  }
+]

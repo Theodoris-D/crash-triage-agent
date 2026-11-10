@@ -1,0 +1,20 @@
+{
+  "id": "c02_heap_buffer_overflow",
+  "title": "One-byte write past a heap allocation",
+  "cwe": "CWE-122",
+  "crash_class": "heap-buffer-overflow",
+  "signal": "SIGABRT",
+  "root_cause_line": 13,
+  "root_cause_marker": "b[n] = '!'",
+  "crashing_stdin": "8\n",
+  "functional_tests": [
+    {
+      "stdin": "5\n",
+      "expect_substr": "ok 5"
+    },
+    {
+      "stdin": "1\n",
+      "expect_substr": "ok 1"
+    }
+  ]
+}

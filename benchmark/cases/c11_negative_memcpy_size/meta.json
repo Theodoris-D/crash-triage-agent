@@ -1,0 +1,20 @@
+{
+  "id": "c11_negative_memcpy_size",
+  "title": "Signed length flows into memcpy as a huge size_t",
+  "cwe": "CWE-195",
+  "crash_class": "memcpy-overflow",
+  "signal": "SIGABRT",
+  "root_cause_line": 11,
+  "root_cause_marker": "memcpy(dst, src, len)",
+  "crashing_stdin": "-1\n",
+  "functional_tests": [
+    {
+      "stdin": "3\n",
+      "expect_substr": "copied=3"
+    },
+    {
+      "stdin": "5\n",
+      "expect_substr": "copied=5"
+    }
+  ]
+}

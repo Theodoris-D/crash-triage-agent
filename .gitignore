@@ -1,0 +1,19 @@
+# byte-compiled / packaging
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# generated / local artifacts
+benchmark/_build/
+/tmp/
+eval/results.db
+eval/*.db
+eval/report.md
+*.log
+*.tar.gz
+*.asan
+.pytest_cache/

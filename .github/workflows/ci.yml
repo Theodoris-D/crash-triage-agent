@@ -29,9 +29,9 @@ jobs:
       - name: Run tests
         run: python -m pytest
 
-      - name: Offline evaluation (scripted) + report
+      - name: Offline evaluation (mock) + report
         run: |
-          python eval/harness.py --provider scripted --security-cases 3 --notes "ci"
+          python eval/harness.py --provider mock --security-cases 3 --notes "ci"
           python eval/report.py -o eval/report.md
           cat eval/report.md
 

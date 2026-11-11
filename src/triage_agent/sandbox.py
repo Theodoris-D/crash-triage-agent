@@ -44,6 +44,12 @@ class RunResult:
     def crashed(self) -> bool:
         return self.timed_out or self.signal is not None or (self.exit_code not in (0, None))
 
+    @property
+    def crashed_by_signal(self) -> bool:
+        # A real memory-safety/arith crash is a fatal signal or a timeout (the
+        # sanitizers abort via SIGABRT). A clean non-zero exit is NOT a crash.
+        return self.timed_out or self.signal is not None
+
 
 def _scrubbed_env(extra: dict | None = None) -> dict:
     env = {k: os.environ[k] for k in ENV_ALLOWLIST if k in os.environ}
@@ -152,6 +158,10 @@ def run_under_gdb(binary: pathlib.Path, stdin: str, gdb_commands: list[str], *,
         ex += ["-ex", c]
     cmd = ["gdb", "-q", "-nx", "-batch",
            "-ex", "set pagination off", "-ex", "set confirm off",
+           # Defence in depth: never let an inspected expression call a function
+           # in the target (that would execute code). The policy/tool backstop
+           # already reject call-shaped expressions; this is the third layer.
+           "-ex", "set may-call-functions off",
            *ex, "--args", str(binary)]
     # gdb itself must not inherit the sanitizer's abort handler noise on stdout.
     env = _scrubbed_env(extra_env)

@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+import re
 
 HERE = pathlib.Path(__file__).resolve().parent
 CASES_DIR = HERE / "cases"
@@ -167,7 +168,8 @@ int main(void) {
         "cwe": "CWE-415",
         "crash_class": "double-free",
         "signal": "SIGABRT",
-        "root_cause_marker": "free(p);                       /* second free",
+        "root_cause_marker": "free(p);",
+        "root_line": 13,
         "crashing_stdin": "twice\n",
         "functional": [["once\n", "done"], ["ok\n", "done"]],
         "bug": r"""
@@ -601,6 +603,17 @@ int main(void) {
 ]
 
 
+_LEAK_COMMENT = re.compile(r"\s*/\*[^\n]*(?:BUG|CWE)[^\n]*\*/\s*$", re.I)
+
+
+def _strip_leak(src: str) -> str:
+    """Remove inline comments that name the bug or its CWE, so the agent cannot
+    read the answer out of the source. Benign descriptive comments are kept.
+    The ground truth stays in meta.json."""
+    lines = [_LEAK_COMMENT.sub("", ln).rstrip() for ln in src.splitlines()]
+    return "\n".join(lines) + ("\n" if src.endswith("\n") else "")
+
+
 def _root_line(bug_src: str, marker: str) -> int:
     for i, ln in enumerate(bug_src.splitlines(), 1):
         if marker in ln:
@@ -612,15 +625,16 @@ def main() -> None:
     CASES_DIR.mkdir(parents=True, exist_ok=True)
     manifest = []
     for c in CASES:
-        d = CASES_DIR / c["id"]
+        cid = c["id"].split("_", 1)[0]   # neutral id ('c01'), not 'c01_stack_buffer_overflow'
+        d = CASES_DIR / cid
         d.mkdir(exist_ok=True)
-        bug = c["bug"].lstrip("\n")
+        bug = _strip_leak(c["bug"].lstrip("\n"))  # the agent must not read the answer
         fix = c["fix"].lstrip("\n")
         (d / "bug.c").write_text(bug)
         (d / "fix.c").write_text(fix)
-        line = _root_line(bug, c["root_cause_marker"])
+        line = c.get("root_line") or _root_line(bug, c["root_cause_marker"])
         meta = {
-            "id": c["id"],
+            "id": cid,
             "title": c["title"],
             "cwe": c["cwe"],
             "crash_class": c["crash_class"],

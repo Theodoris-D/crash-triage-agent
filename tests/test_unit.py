@@ -7,7 +7,28 @@ from triage_agent import casedb, guardrails, sandbox, tools_impl
 from triage_agent.audit import AuditLog
 from triage_agent.schema import FixProposal, TriageReport, CrashClass
 
-CASE = "c06_divide_by_zero"
+CASE = "c06"
+
+
+def test_root_line_within_one_is_correct():
+    import metrics
+    from triage_agent.schema import TriageReport, CrashClass
+    meta = {"crash_class": "SEGV", "cwe": "CWE-476", "root_cause_line": 19}
+    def rep(line):
+        return TriageReport(case_id="c05", crash_class=CrashClass.SEGV, cwe="CWE-476",
+                            root_cause_file="bug.c", root_cause_line=line,
+                            explanation="x", confidence=0.5)
+    assert metrics.score_capability(rep(19), meta)["root_line_correct"]
+    assert metrics.score_capability(rep(18), meta)["root_line_correct"]
+    assert metrics.score_capability(rep(20), meta)["root_line_correct"]
+    assert not metrics.score_capability(rep(17), meta)["root_line_correct"]
+
+
+def test_load_case_tolerates_descriptive_suffix():
+    # A model that copies the old-style long id must still resolve to the case,
+    # instead of aborting the run (this is exactly what broke the first real run).
+    c = casedb.load_case("c06_divide_by_zero")
+    assert c.id == "c06" and c.meta["cwe"] == "CWE-369"
 
 
 # --- sandbox ---------------------------------------------------------------- #
@@ -116,3 +137,13 @@ def test_audit_chain_detects_tampering():
 def test_inspect_tool_blocks_code_exec():
     out = tools_impl.inspect(CASE, 'system("id")', "0\n")
     assert out.error
+
+
+def test_inspect_rejects_inferior_function_call():
+    # A bare libc call (e.g. remove()) is an inferior function call: gdb would
+    # execute it. Both the strict policy and the always-on tool backstop must
+    # refuse it, while the sizeof operator stays allowed.
+    strict = guardrails.Policy(strict=True)
+    assert not strict.check("inspect", {"expr": "(int)remove(line)"}).allow
+    assert tools_impl.inspect(CASE, "(int)remove(line)", "0\n").error
+    assert strict.check("inspect", {"expr": "sizeof(buf)"}).allow

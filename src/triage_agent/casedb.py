@@ -90,8 +90,16 @@ def load_case(case_id: str) -> Case:
     d = CASES_DIR / case_id
     meta_path = d / "meta.json"
     if not meta_path.exists():
-        raise CaseError(f"unknown case: {case_id!r}")
-    return Case(id=case_id, dir=d, meta=json.loads(meta_path.read_text()))
+        # Tolerate a descriptive suffix a model may append to the neutral id
+        # (e.g. 'c01_stack_buffer_overflow' -> 'c01'), so a stray tool argument
+        # does not abort the whole run.
+        short = case_id.split("_", 1)[0]
+        alt = CASES_DIR / short / "meta.json"
+        if short != case_id and alt.exists():
+            d, meta_path = CASES_DIR / short, alt
+        else:
+            raise CaseError(f"unknown case: {case_id!r}")
+    return Case(id=d.name, dir=d, meta=json.loads(meta_path.read_text()))
 
 
 def all_case_ids() -> list[str]:

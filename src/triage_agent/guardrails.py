@@ -49,6 +49,11 @@ SAFE_EXPR_RE = re.compile(r"^[A-Za-z0-9_\[\]\.\->\*\(\)\s\+]{1,80}$")
 _FORBIDDEN_EXPR_TOKENS = ("system", "exec", "popen", "shell", "call ", "$", "`",
                           ";", "=", "{", "}", "\n", "<", ">", "\"", "'")
 
+# Any identifier (other than the sizeof operator) immediately followed by "(" is
+# a function call. gdb evaluates such an expression as an inferior function call,
+# i.e. it RUNS code in the target -- so these must never reach the debugger.
+_CALL_RE = re.compile(r"(?<![\w.])(?!sizeof\b)[A-Za-z_]\w*\s*\(")
+
 # Injection signatures scanned in untrusted content.
 _INJECTION_PATTERNS = [
     (re.compile(r"ignore (the |all |previous |above )", re.I), "ignore-directive"),
@@ -89,6 +94,8 @@ class Policy:
             low = expr.lower()
             if any(tok in low for tok in _FORBIDDEN_EXPR_TOKENS):
                 return PolicyDecision(False, "inspect-expr-forbidden-token")
+            if _CALL_RE.search(expr):
+                return PolicyDecision(False, "inspect-expr-calls-function")
         if tool in ("read_source", "search_source"):
             path = str(arguments.get("path", "bug.c"))
             if "/" in path or ".." in path or path not in ("bug.c",):

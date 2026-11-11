@@ -10,7 +10,7 @@
 #
 # For a real model, pass the endpoint through at runtime, e.g.:
 #   docker run --rm -e OPENROUTER_API_KEY=... crash-triage-agent \
-#       python eval/harness.py --provider openrouter:anthropic/claude-3.5-sonnet
+#       python eval/harness.py --provider openrouter:anthropic/claude-haiku-5.5
 FROM python:3.12-slim-bookworm
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

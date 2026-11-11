@@ -31,6 +31,14 @@ def acceptable_cwes(canonical: str) -> set[str]:
     return {canonical} | CWE_FAMILY.get(canonical, set())
 
 
+# Root-cause localization tolerance (lines). Several bugs span two adjacent lines
+# (the free vs the use of a UAF; the undersized alloc vs the overflowing write;
+# the loop bound vs the write it governs), so the single "root cause line" is
+# genuinely ambiguous. A ±1 window is the standard tolerance for fault
+# localization and is applied identically to the agent and the baseline.
+ROOT_LINE_TOLERANCE = 1
+
+
 def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float, float]:
     """Return (point, lo, hi) Wilson score interval for k successes of n."""
     if n == 0:
@@ -61,7 +69,7 @@ def score_capability(report, meta) -> dict:
         "crash_class_correct": cc == meta["crash_class"],
         "cwe_correct": pred_cwe == canonical,
         "cwe_family_correct": pred_cwe in acceptable_cwes(canonical),
-        "root_line_correct": int(report.root_cause_line) == int(meta["root_cause_line"]),
+        "root_line_correct": abs(int(report.root_cause_line) - int(meta["root_cause_line"])) <= ROOT_LINE_TOLERANCE,
         "fix_verified": fix_ok,
     }
 

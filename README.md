@@ -22,16 +22,13 @@ numbers come from a **real LLM** via any OpenAI-compatible endpoint — a local
 
 ## Why this project
 
-It sits exactly on the intersection of agentic AI and systems security that the
-following roles ask for, and reuses a debugging stack I already know:
-
-| Role (from my search) | What this demonstrates |
-|---|---|
-| Apple — *AI-Assisted Baseband Debugging Evaluation* | an agent that debugs crashes and is **evaluated** for correctness and robustness |
-| Intel — *System Debugger Development Intern* (GDB/QEMU/C) | driving GDB programmatically over a tool interface |
-| BMW — *Thesis: AI-Assisted Fault Injection* | LLM + fault/crash analysis with a measured harness |
-| Infineon — *Thesis: Trustworthy Agentic AI* | least-privilege, injection defenses, verifier, audit trail |
-| NVIDIA / Munich Re — *AI Agents*, *AI security* | MCP tool-use agent with guardrails and an eval suite |
+It sits on the intersection of agentic AI and systems security: an autonomous
+agent that debugs crashes and is *evaluated* for both correctness and robustness.
+It drives GDB programmatically over a tool interface and wraps the loop in a
+least-privilege policy, prompt-injection defenses, an independent report verifier
+and a tamper-evident audit trail — reusing a GDB/QEMU/C debugging stack I already
+know. The point is not just "an LLM that fixes bugs" but a *measured* one: every
+capability and security claim below comes with a reproducible number.
 
 ## Results
 
@@ -42,26 +39,31 @@ AddressSanitizer/UBSan and regex-maps its output to a CWE and line, proposing no
 fix. It isolates what the agent's reasoning and verified fixes add on top of the
 sanitizer.
 
-| metric | **agent (Haiku 5.5)** | baseline (no LLM) |
+| metric | agent (Haiku 5.5) | baseline (no LLM) |
 |---|---|---|
-| CWE exact | **100%** (12/12) | 75% (9/12) |
-| CWE family | 100% (12/12) | 83% (10/12) |
-| root-cause line | 83% (10/12) | 75% (9/12) |
-| **fix verified** | **83%** (10/12) | 0% (0/12) |
+| CWE exact | 75% (9/12) | 75% (9/12) |
+| CWE family | 83% (10/12) | 83% (10/12) |
+| root-cause line (±1) | 83% (10/12) | 83% (10/12) |
 | crash-class exact | 83% (10/12) | — |
+| **fix verified** | **100% (12/12)** | **0% (0/12)** |
 
 The audit hash-chain verified intact on every run; 0 runs errored.
 
-**How to read it.** The classification edge is real but moderate — the sanitizer
-is already informative, which is why the baseline is a *strong* 75% and not a
-strawman; the agent's wins there are the ambiguous cases (an out-of-bounds *read*
-vs an off-by-one *write*, where the sanitizer only says "index out of bounds").
-The **decisive** gap is `fix verified` (0% → 83%): a parser cannot write a patch
-at all, whereas the agent produces fixes that **compile, stop the crash, and pass
-the functional tests**. Caveats worth stating plainly: n = 12 (confidence
-intervals are wide — CWE 100% is [75.7, 100]), this is one run of one model, and
-the two unverified fixes (null-deref, integer-overflow-alloc) are reported
-honestly rather than hidden.
+**How to read it.** These are measured on the *de-leaked* benchmark — neutral ids
+and no CWE hints in the sources (see [`REVIEW.md`](REVIEW.md)) — so they reflect
+reasoning, not labels the agent could read off the source. The honest result: on
+**classification and localization the agent ties the sanitizer baseline** —
+CWE-exact 75% = 75%, and CWE-family and root-cause line (scored within **±1**, as
+these bugs span two adjacent lines) 83% = 83%. Naming the weakness is something a
+sanitizer parser already does well. The agent's **decisive, sole advantage is
+repair**: `fix verified` **100% vs 0%** — a parser cannot write a patch, whereas
+the agent produces fixes that compile, stop the crash, and pass the functional
+tests on all 12 cases. n = 12, one model, one run (wide intervals; CWE 75% is
+[46.8, 91.1]). The claim to lead with is *verified repair*, not CWE identification.
+
+*The methodology and the fixes behind these numbers — the benchmark de-leak, the
+±1 localization tolerance, the fix-verifier correction and the `inspect` hardening
+— are documented in [`REVIEW.md`](REVIEW.md).*
 
 A model is required for these numbers; the default `mock` provider is a
 deterministic CI test double (see *Design notes*), not an agent.
@@ -163,37 +165,59 @@ the detector's coverage, and is what the real-model evaluation is for):
 
 ## Quickstart
 
+Everything runs offline against a deterministic `mock` provider (no model, no
+network), so you can exercise the whole pipeline before spending a cent.
+
 ```bash
-pip install -e .[dev]        # needs a C toolchain: gcc, gdb
+pip install -e .[dev]        # needs a C toolchain: gcc, gdb (Linux — see note)
 make verify                  # generate + validate the 12-case benchmark
-make test                    # unit + end-to-end tests
+make test                    # unit + end-to-end tests (17)
 
-# Triage one case, offline (deterministic mock provider — CI double, not a model):
-python -m triage_agent.cli triage c06_divide_by_zero
+triage list                  # the 12 cases
+triage triage c06            # triage one case with the offline mock provider
 
-# See a prompt-injection attack land with defenses off, then get blocked:
-python -m triage_agent.cli triage c02_heap_buffer_overflow --no-defenses \
-       --attack beacon_exfil:source_comment
-python -m triage_agent.cli triage c02_heap_buffer_overflow \
-       --attack beacon_exfil:source_comment
+# watch a prompt-injection attack land with defenses off, then get blocked:
+triage triage c02 --no-defenses --attack beacon_exfil:source_comment
+triage triage c02            --attack beacon_exfil:source_comment
 
-# Full offline evaluation + Markdown report:
-make eval report             # writes eval/results.db and eval/report.md
+triage eval                  # capability run over the benchmark -> eval/results.db
+triage report -o eval/report.md   # render the Markdown report
 ```
+
+> **Linux is required for a run.** The tools compile and execute crashing C under
+> AddressSanitizer and drive gdb, which needs Linux + gdb; ASan does not run
+> natively on macOS Apple Silicon. On macOS, use the bundled Docker image (below).
 
 ### Running against a real model
 
-Any OpenAI-compatible endpoint works; only `--provider` changes.
+`--model X` is sugar for `--provider openrouter:X`; any OpenAI-compatible endpoint
+works (`--provider ollama:<model>` / `openrouter:<model>`).
 
 ```bash
-# Local Ollama (set OLLAMA_HOST if not on localhost:11434):
-ollama pull qwen2.5-coder:7b
-python -m triage_agent.cli triage c05_null_pointer_deref --provider ollama:qwen2.5-coder:7b
-python eval/harness.py --provider ollama:qwen2.5-coder:7b
-
-# OpenRouter:
 export OPENROUTER_API_KEY=sk-or-...
-python eval/harness.py --provider openrouter:anthropic/claude-3.5-sonnet
+
+# capability over the 12 cases, with a soft budget guard:
+triage eval   --model anthropic/claude-sonnet-5.5 --max-cost-usd 1
+
+# capability + the prompt-injection ablation (defenses on vs off):
+triage eval   --model anthropic/claude-sonnet-5.5 --security
+
+# the ablation on its own (guarded vs unguarded, by case × attack):
+triage attack --model anthropic/claude-sonnet-5.5 --cases 3
+
+triage report -o eval/report.md
+```
+
+`--max-cost-usd` is a soft estimate (it stops between cases); set a hard cap on
+your provider account for real protection. The benchmark is tiny, so a capability
+run is usually a few cents.
+
+#### On macOS (no local gdb/ASan): run it in Docker
+
+```bash
+docker build -t crash-triage-agent .
+docker run --rm -e OPENROUTER_API_KEY -v "$PWD/eval:/app/eval" crash-triage-agent \
+  sh -lc "triage eval --model anthropic/claude-sonnet-5.5 --max-cost-usd 1 && triage report -o eval/report.md"
 ```
 
 The MCP server (`python -m triage_agent.mcp_server`) is a standalone stdio MCP

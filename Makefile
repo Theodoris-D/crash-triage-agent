@@ -9,7 +9,7 @@ help:
 	@echo "make bench      # generate the benchmark C cases"
 	@echo "make verify     # compile every case and check the crash/fix invariants"
 	@echo "make test       # run the unit + end-to-end tests"
-	@echo "make eval       # run the offline scripted evaluation (writes eval/results.db)"
+	@echo "make eval       # run the offline evaluation (writes eval/results.db)"
 	@echo "make report     # render eval/report.md from the latest run"
 	@echo "make docker     # build the sandboxed runtime image"
 
@@ -26,7 +26,7 @@ test: bench
 	$(PY) -m pytest
 
 eval: bench
-	$(PY) eval/harness.py --provider scripted --security-cases 3 --notes "make eval"
+	$(PY) eval/harness.py --provider mock --security-cases 3 --notes "make eval"
 
 report:
 	$(PY) eval/report.py -o eval/report.md

@@ -36,6 +36,18 @@ class ProviderError(RuntimeError):
     pass
 
 
+# Rough OpenRouter rates (USD per 1M tokens, input / output), late 2026. Used
+# only for the --max-cost-usd soft guard; treat as an estimate, and set a hard
+# cap on your provider account for real protection.
+RATES = {
+    "anthropic/claude-haiku-5.5": (0.10, 0.50),
+    "anthropic/claude-sonnet-5.5": (3.00, 15.00),
+    "anthropic/claude-opus-5.5": (4.00, 20.00),
+    "deepseek/deepseek-v4-flash-0731": (0.043, 0.30),
+}
+DEFAULT_RATE = (1.00, 5.00)
+
+
 class OpenAICompatibleProvider:
     def __init__(self, base_url: str, model: str, api_key: str | None = None,
                  name: str | None = None, temperature: float = 0.0,
@@ -47,6 +59,8 @@ class OpenAICompatibleProvider:
         self.temperature = temperature
         self.timeout = timeout
         self.extra_headers = extra_headers or {}
+        self.prompt_tokens = 0
+        self.completion_tokens = 0
 
     def chat(self, messages: list[dict], tools: list[dict]) -> dict:
         payload = {
@@ -69,6 +83,9 @@ class OpenAICompatibleProvider:
             raise ProviderError(f"{self.name}: HTTP {e.code}: {e.read()[:400]!r}")
         except urllib.error.URLError as e:
             raise ProviderError(f"{self.name}: cannot reach {self.base_url}: {e.reason}")
+        u = body.get("usage") or {}
+        self.prompt_tokens += int(u.get("prompt_tokens", 0) or 0)
+        self.completion_tokens += int(u.get("completion_tokens", 0) or 0)
         try:
             msg = body["choices"][0]["message"]
         except (KeyError, IndexError):
@@ -79,6 +96,10 @@ class OpenAICompatibleProvider:
             "tool_calls": msg.get("tool_calls") or [],
         }
 
+    def estimated_cost_usd(self) -> float:
+        rin, rout = RATES.get(self.model, DEFAULT_RATE)
+        return (self.prompt_tokens * rin + self.completion_tokens * rout) / 1_000_000
+
 
 def ollama_provider(model: str = "qwen2.5-coder:7b",
                     host: str | None = None) -> OpenAICompatibleProvider:
@@ -88,7 +109,7 @@ def ollama_provider(model: str = "qwen2.5-coder:7b",
                                     name=f"ollama:{model}")
 
 
-def openrouter_provider(model: str = "anthropic/claude-3.5-sonnet",
+def openrouter_provider(model: str = "anthropic/claude-haiku-5.5",
                         api_key: str | None = None) -> OpenAICompatibleProvider:
     api_key = api_key or os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
@@ -107,7 +128,7 @@ def build_provider(spec: str, case=None):
     if kind == "ollama":
         return ollama_provider(model or "qwen2.5-coder:7b")
     if kind == "openrouter":
-        return openrouter_provider(model or "anthropic/claude-3.5-sonnet")
+        return openrouter_provider(model or "anthropic/claude-haiku-5.5")
     raise ProviderError(f"unknown provider spec: {spec!r}")
 
 
@@ -127,6 +148,11 @@ class MockProvider:
         self.attack = attack
         self.beacon = beacon
         self._did_attack = False
+        self.prompt_tokens = 0
+        self.completion_tokens = 0
+
+    def estimated_cost_usd(self) -> float:
+        return 0.0
 
     def _plan(self) -> list[tuple[str, dict]]:
         cid = self.case.id

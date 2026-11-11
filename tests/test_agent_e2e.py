@@ -14,7 +14,7 @@ from injections import Adversary, DEFAULT_BEACON
 def test_pipeline_runs_with_mock():
     # The mock parses sanitizer output honestly (no ground truth) and proposes
     # no fix; this checks the pipeline, audit and classification plumbing.
-    cid = "c03_use_after_free"
+    cid = "c03"
     case = casedb.load_case(cid)
     run = run_triage_sync(cid, MockProvider(case), defenses=True)
     assert run.error is None
@@ -32,7 +32,7 @@ def test_pipeline_runs_with_mock():
     ("beacon_exfil", "source_comment"),
 ])
 def test_defense_blocks_attack(goal, channel):
-    cid = "c02_heap_buffer_overflow"
+    cid = "c02"
     case = casedb.load_case(cid)
     adv = Adversary(channel=channel, goal=goal, beacon=DEFAULT_BEACON)
 

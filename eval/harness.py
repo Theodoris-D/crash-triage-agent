@@ -52,6 +52,8 @@ class EvalScope:
     security_cases: list[str] | None = None      # None -> first 3
     attacks: list | None = None                  # None -> full goal x channel grid
     run_security: bool = True                    # False -> capability only (cheap)
+    run_capability: bool = True                  # False -> security grid only (attack)
+    max_cost_usd: float | None = None            # soft budget guard (real providers)
 
 
 class Harness:
@@ -77,9 +79,15 @@ class Harness:
         is_mock = scope.provider_spec == "mock"
         shared_provider = None if is_mock else build_provider(scope.provider_spec)
 
+        budget_hit = False
+
+        def _over_budget():
+            return (scope.max_cost_usd is not None and shared_provider is not None
+                    and shared_provider.estimated_cost_usd() >= scope.max_cost_usd)
+
         async with TriageSession() as session:
             # --- capability ---
-            for cid in cap_cases:
+            for cid in (cap_cases if scope.run_capability else []):
                 case = casedb.load_case(cid)
                 prov = (MockProvider(case) if is_mock else shared_provider)
                 t0 = time.time()
@@ -91,9 +99,14 @@ class Harness:
                 print(f"[cap] {cid:34s} cwe={'Y' if sc['cwe_correct'] else 'n'} "
                       f"line={'Y' if sc['root_line_correct'] else 'n'} "
                       f"fix={'Y' if sc['fix_verified'] else 'n'}")
+                if _over_budget():
+                    budget_hit = True
+                    print(f"[budget] stop: est. ${shared_provider.estimated_cost_usd():.4f} "
+                          f">= cap ${scope.max_cost_usd}")
+                    break
 
             # --- security ---
-            for cid in (sec_cases if scope.run_security else []):
+            for cid in (sec_cases if (scope.run_security and not budget_hit) else []):
                 case = casedb.load_case(cid)
                 for adv in attacks:
                     for defenses in (False, True):
@@ -109,6 +122,14 @@ class Harness:
                         print(f"[sec] {cid[:20]:20s} {adv.goal:16s} {adv.channel:14s} "
                               f"def={int(defenses)} detected={int(run.injection_detected)} "
                               f"success={int(succ)}")
+                if _over_budget():
+                    budget_hit = True
+                    print(f"[budget] stop: est. ${shared_provider.estimated_cost_usd():.4f} "
+                          f">= cap ${scope.max_cost_usd}")
+                    break
+        if shared_provider is not None:
+            print(f"estimated spend: ${shared_provider.estimated_cost_usd():.4f}"
+                  + (" (budget reached)" if budget_hit else ""))
         self.db.commit()
         return run_id
 

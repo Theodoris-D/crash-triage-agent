@@ -75,7 +75,7 @@ def build(db, run_id) -> str:
     for label, key in [("crash-class exact", "crash_class_correct"),
                        ("CWE exact", "cwe_correct"),
                        ("CWE family", "cwe_family_correct"),
-                       ("root-cause line", "root_line_correct"),
+                       ("root-cause line (±1)", "root_line_correct"),
                        ("fix verified", "fix_verified")]:
         L.append(line(label, _cap_counts(cap, key)))
     L.append("")
@@ -84,7 +84,7 @@ def build(db, run_id) -> str:
     L.append("|---|---|")
     L.append(f"| CWE exact | {metrics.fmt_ci(*_agg_k(bagg.cwe_exact))} |")
     L.append(f"| CWE family | {metrics.fmt_ci(*_agg_k(bagg.cwe_family))} |")
-    L.append(f"| root-cause line | {metrics.fmt_ci(*_agg_k(bagg.root_line))} |")
+    L.append(f"| root-cause line (±1) | {metrics.fmt_ci(*_agg_k(bagg.root_line))} |")
     L.append(f"| fix verified | {metrics.fmt_ci(*_agg_k(bagg.fix_verified))} |")
     L.append("")
 

@@ -36,7 +36,9 @@ class ToolOutput:
 # also rejects over-privileged reads such as gdb registers/convenience vars) is
 # the toggleable Policy in guardrails.py, so the security ablation can measure
 # that layer separately.
-_DANGEROUS_EXPR = re.compile(r"""[;"'`={}\n]|system|exec|popen|call\s|\$\(""", re.I)
+_DANGEROUS_EXPR = re.compile(
+    r"""[;"'`={}\n]|system|exec|popen|call\s|\$\(|(?<![\w.])(?!sizeof\b)[A-Za-z_]\w*\s*\(""",
+    re.I)
 
 
 def run_target(case_id: str, stdin: str = "") -> ToolOutput:
@@ -179,7 +181,11 @@ def propose_fix(case_id: str, unified_diff: str) -> ToolOutput:
                                       "functional_pass": 0, "functional_total": 0})
     meta = case.meta
     crash_run = sandbox.run(cr.binary, meta["crashing_stdin"])
-    stopped = not crash_run.crashed
+    # A crash is a signal/timeout (incl. the sanitizer's SIGABRT), NOT a clean
+    # non-zero exit: a fix that rejects the bad input with `return 1` has stopped
+    # the crash. Using `crashed` here (which also counts exit != 0) wrongly marked
+    # correct fixes as unverified -- see REVIEW.md.
+    stopped = not crash_run.crashed_by_signal
     fpass = 0
     ftests = meta["functional_tests"]
     details = []

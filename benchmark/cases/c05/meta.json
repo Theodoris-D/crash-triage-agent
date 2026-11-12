@@ -1,0 +1,20 @@
+{
+  "id": "c05",
+  "title": "Dereference of a lookup miss that returns NULL",
+  "cwe": "CWE-476",
+  "crash_class": "SEGV",
+  "signal": "SIGSEGV",
+  "root_cause_line": 19,
+  "root_cause_marker": "printf(\"value=%d\\n\", row->value)",
+  "crashing_stdin": "missing\n",
+  "functional_tests": [
+    {
+      "stdin": "alpha\n",
+      "expect_substr": "value=1"
+    },
+    {
+      "stdin": "beta\n",
+      "expect_substr": "value=2"
+    }
+  ]
+}

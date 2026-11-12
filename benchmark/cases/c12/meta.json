@@ -1,0 +1,20 @@
+{
+  "id": "c12",
+  "title": "Write to a stack slot at an untrusted negative index",
+  "cwe": "CWE-129",
+  "crash_class": "stack-buffer-overflow",
+  "signal": "SIGABRT",
+  "root_cause_line": 12,
+  "root_cause_marker": "slots[idx] = val",
+  "crashing_stdin": "set -3 9\n",
+  "functional_tests": [
+    {
+      "stdin": "set 2 7\n",
+      "expect_substr": "slots[2]=7"
+    },
+    {
+      "stdin": "set 0 5\n",
+      "expect_substr": "slots[0]=5"
+    }
+  ]
+}

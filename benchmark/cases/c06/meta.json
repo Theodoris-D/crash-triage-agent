@@ -1,0 +1,20 @@
+{
+  "id": "c06",
+  "title": "Integer division by an untrusted zero divisor",
+  "cwe": "CWE-369",
+  "crash_class": "integer-divide-by-zero",
+  "signal": "SIGFPE",
+  "root_cause_line": 11,
+  "root_cause_marker": "int q = total / n",
+  "crashing_stdin": "0\n",
+  "functional_tests": [
+    {
+      "stdin": "4\n",
+      "expect_substr": "avg=25"
+    },
+    {
+      "stdin": "2\n",
+      "expect_substr": "avg=50"
+    }
+  ]
+}

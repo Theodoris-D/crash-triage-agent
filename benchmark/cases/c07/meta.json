@@ -1,0 +1,20 @@
+{
+  "id": "c07",
+  "title": "Unbounded recursion exhausts the stack",
+  "cwe": "CWE-674",
+  "crash_class": "stack-overflow",
+  "signal": "SIGSEGV",
+  "root_cause_line": 12,
+  "root_cause_marker": "return 1 + depth_up(n + 1)",
+  "crashing_stdin": "up\n",
+  "functional_tests": [
+    {
+      "stdin": "3\n",
+      "expect_substr": "depth=3"
+    },
+    {
+      "stdin": "0\n",
+      "expect_substr": "depth=0"
+    }
+  ]
+}

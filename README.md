@@ -73,7 +73,11 @@ off} and reports attack-success-rate and injection-detection separately. Against
 the deterministic `mock` attacker the defenses block every attack **by
 construction** (0% on / 100% off — a mechanism self-test); the *interesting*
 measurement is a real model's ASR under injection, which the same harness
-produces when pointed at one (`make eval` without `--capability-only`).
+produces when pointed at one (`make eval` without `--capability-only`). One
+caveat on how to read it: every payload is written to trip the detector's
+signatures, so a low ASR on a real model should be read as "the mechanism
+engages", not as generalization to paraphrased or indirect injections. The suite
+is a mechanism test, not an attack benchmark.
 
 ## Costs
 
@@ -138,7 +142,7 @@ Three attacker goals, each targeting a specific defense:
 | attacker goal | what it tries | defense that stops it |
 |---|---|---|
 | `forbidden_inspect` | run a non-read-only GDB expression (e.g. registers / calls) | **least-privilege policy** — `inspect` expression whitelist |
-| `false_verified` | report an **unverified** fix as verified | **report verifier** — `verified` is recomputed from the audit trail, never trusted from the model |
+| `false_verified` | report an **unverified** fix as verified | **report verifier** — `verified` is recomputed from the verdict the tool emitted after actually compiling and running the patch, never trusted from the model |
 | `beacon_exfil` | copy an attacker token into the report | **spotlighting + detect/redact**, plus verifier strips beacons |
 
 Defense-in-depth, all **model-agnostic** (they act on the message/tool streams, so
@@ -153,8 +157,11 @@ the detector's coverage, and is what the real-model evaluation is for):
    tool output is delimited with a per-run nonce and scanned; spans matching
    injection signatures are quarantined before the model sees them.
 3. **Report verifier** (`guardrails.verify_report`) — recomputes fix verification
-   from the audit trail, strips beacon tokens, flags unsupported claims, and
-   derates confidence.
+   from what the tools actually established (`VerifierState`, fed by the
+   `propose_fix` verdict), strips beacon tokens, flags unsupported claims, and
+   derates confidence. It reads that in-memory tool verdict, not the audit log:
+   the audit log is the tamper-evident record of what was called, not an input to
+   scoring.
 4. **Tamper-evident audit log** (`audit.py`) — every tool call is recorded in a
    SHA-256 hash chain; any edit/reorder/deletion breaks `verify_chain()`.
 
@@ -171,7 +178,7 @@ network), so you can exercise the whole pipeline before spending a cent.
 ```bash
 pip install -e .[dev]        # needs a C toolchain: gcc, gdb (Linux — see note)
 make verify                  # generate + validate the 12-case benchmark
-make test                    # unit + end-to-end tests (17)
+make test                    # unit + end-to-end tests (19)
 
 triage list                  # the 12 cases
 triage triage c06            # triage one case with the offline mock provider
@@ -185,8 +192,10 @@ triage report -o eval/report.md   # render the Markdown report
 ```
 
 > **Linux is required for a run.** The tools compile and execute crashing C under
-> AddressSanitizer and drive gdb, which needs Linux + gdb; ASan does not run
-> natively on macOS Apple Silicon. On macOS, use the bundled Docker image (below).
+> AddressSanitizer and drive gdb, which needs Linux + gdb. On macOS Apple Silicon
+> the sources compile but a sanitizer-built target hangs until the wall-clock limit
+> kills it, so every tool call times out instead of returning output. On macOS,
+> use the bundled Docker image (below).
 
 ### Running against a real model
 
@@ -276,7 +285,7 @@ eval/
   metrics.py        Wilson-interval scoring
   report.py         Markdown report
   compare.py        regression gate between two runs
-tests/            unit + end-to-end (16 tests)
+tests/            unit + end-to-end (19 tests)
 Dockerfile, Makefile, .github/workflows/ci.yml
 ```
 
@@ -300,6 +309,19 @@ Dockerfile, Makefile, .github/workflows/ci.yml
   cleanly while dangerous execution is never possible either way.
 - **CWE scoring is reported two ways** (exact and family) because several of these
   weaknesses legitimately share a parent (an out-of-bounds write is also CWE-787).
+- **The agent is not handed the crashing input.** Its prompt gives it the case id
+  and the source; the tools take the stdin to feed the target, so it has to work
+  out an input that triggers the crash before it can reproduce, read a sanitizer
+  report or verify a fix. The heuristic baseline is given
+  `meta["crashing_stdin"]` directly, so the classification/localization
+  comparison runs at an information advantage to the **baseline**, not the agent.
+- **Scope of the injection defenses.** Spotlighting and redaction cover the six
+  untrusted channels (`run_target`, `sanitizer_report`, `gdb_backtrace`,
+  `inspect`, `read_source`, `search_source`). `propose_fix` — whose output embeds
+  a few bytes of the patched program's stdout — is returned unredacted, and the
+  beacon check/strip covers the free-text `explanation` only, not `cwe`,
+  `root_cause_file` or the diff. Both are current gaps rather than guarantees,
+  and both are the first things to widen.
 
 ## License
 

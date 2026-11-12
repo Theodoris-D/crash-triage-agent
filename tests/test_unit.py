@@ -10,6 +10,19 @@ from triage_agent.schema import FixProposal, TriageReport, CrashClass
 CASE = "c06"
 
 
+def test_build_report_survives_malformed_finalize():
+    from triage_agent.agent import _build_report
+    state = guardrails.VerifierState(source_line_count=50)
+    base = {"crash_class": "SEGV", "cwe": "CWE-476", "root_cause_file": "bug.c",
+            "root_cause_line": 12, "explanation": "x", "confidence": 0.9}
+    rep, _ = _build_report("c05", {**base, "confidence": 90}, state)
+    assert rep.confidence == 1.0
+    rep, _ = _build_report("c05", {**base, "root_cause_line": "line 12"}, state)
+    assert rep.root_cause_line == 12
+    rep, _ = _build_report("c05", {**base, "root_cause_line": "??"}, state)
+    assert rep.root_cause_line == 1
+
+
 def test_root_line_within_one_is_correct():
     import metrics
     from triage_agent.schema import TriageReport, CrashClass

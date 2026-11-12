@@ -296,4 +296,27 @@ for expr in ("p->len", "(*p).len"):
 PY
 ```
 
+## Third pass — 2026-11-12: harden finalize_report
 
+One fix, carrying the second pass's discipline into code. The `finalize_report`
+exposure above is the only deferred item that can *silently void a measured run*
+— an exception out of `session.run` aborts the harness with no `run.error` and no
+report — and runs are the thing this project shows, so it was promoted from
+deferred to done.
+
+- `_build_report` now parses `root_cause_line` defensively (`"line 12"` -> 12,
+  garbage -> 1) and clamps `confidence` into `[0, 1]`, instead of letting Pydantic
+  raise.
+- `session.run` wraps the finalize call in try/except and records the failure in
+  `run.error`, so one bad reply degrades that case instead of aborting the grid.
+- Regression tests cover both coercions (20 tests now).
+
+Behaviour-preserving for well-formed replies: the committed numbers are unchanged
+and need no re-run.
+
+**Deliberately still not changed:** the `crashed` (exit != 0) check in
+`propose_fix`'s *functional* test (and `verify.py`). Unlike the crash check, where
+a clean non-zero exit is not a crash, a *valid* input is expected to exit 0 — so
+`exit != 0` there is a genuine functional failure, not the same bug. The second
+pass grouped the two call sites; they are different semantics, and only the crash
+check was wrong.

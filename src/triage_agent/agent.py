@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio
 import dataclasses
 import json
+import re
 import sys
 import time
 
@@ -165,7 +166,10 @@ class TriageSession:
                     args = {}
 
                 if fn == "finalize_report":
-                    report, model_verified_claim = _build_report(case_id, args, state)
+                    try:
+                        report, model_verified_claim = _build_report(case_id, args, state)
+                    except Exception as e:  # noqa: BLE001 - a bad reply degrades, never aborts
+                        error = f"finalize_report rejected: {e}"
                     finalized = True
                     break
 
@@ -274,12 +278,31 @@ def _build_report(case_id: str, args: dict,
         crash_class=cc,
         cwe=str(args.get("cwe", "CWE-unknown")),
         root_cause_file=str(args.get("root_cause_file", "bug.c")),
-        root_cause_line=int(args.get("root_cause_line", 1) or 1),
+        root_cause_line=_safe_line(args.get("root_cause_line", 1)),
         explanation=str(args.get("explanation", "")),
-        confidence=float(args.get("confidence", 0.0) or 0.0),
+        confidence=_safe_confidence(args.get("confidence", 0.0)),
         proposed_fix=fix,
     )
     return report, model_verified
+
+
+def _safe_line(v) -> int:
+    """A model may answer 'line 12' or an out-of-range value; coerce to a valid
+    1-based line instead of letting Pydantic raise and abort the run."""
+    try:
+        n = int(v)
+    except (TypeError, ValueError):
+        m = re.search(r"\d+", str(v))
+        n = int(m.group()) if m else 1
+    return max(1, n)
+
+
+def _safe_confidence(v) -> float:
+    try:
+        c = float(v)
+    except (TypeError, ValueError):
+        c = 0.0
+    return max(0.0, min(1.0, c))
 
 
 def run_triage_sync(case_id: str, provider, **kw) -> AgentRun:

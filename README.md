@@ -178,7 +178,7 @@ network), so you can exercise the whole pipeline before spending a cent.
 ```bash
 pip install -e .[dev]        # needs a C toolchain: gcc, gdb (Linux — see note)
 make verify                  # generate + validate the 12-case benchmark
-make test                    # unit + end-to-end tests (19)
+make test                    # unit + end-to-end tests (20)
 
 triage list                  # the 12 cases
 triage triage c06            # triage one case with the offline mock provider
@@ -285,8 +285,8 @@ eval/
   metrics.py        Wilson-interval scoring
   report.py         Markdown report
   compare.py        regression gate between two runs
-tests/            unit + end-to-end (19 tests)
-Dockerfile, Makefile, .github/workflows/ci.yml
+tests/            unit + end-to-end (20 tests)
+Dockerfile, Makefile, .github/workflows/ci.yml (same steps locally: docker build -t crash-triage-agent . && docker run --rm --network=none crash-triage-agent make verify)
 ```
 
 ## Design notes & honest limitations

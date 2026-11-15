@@ -51,6 +51,8 @@ def wilson(k: int, n: int, z: float = 1.96) -> tuple[float, float, float]:
 
 
 def fmt_ci(k: int, n: int) -> str:
+    if n == 0:
+        return "  n/a (no valid run)"
     p, lo, hi = wilson(k, n)
     return f"{p*100:5.1f}% [{lo*100:4.1f}, {hi*100:4.1f}]  ({k}/{n})"
 
@@ -94,8 +96,17 @@ def aggregate_capability(scores: list[dict]) -> Aggregate:
                      c("fix_verified"))
 
 
+def valid_runs(rows: list[dict]) -> list[dict]:
+    """Runs that actually happened. A run with an error (provider down, bad API key,
+    tool crash) never exercised the model, so it must not count as a success *or* as
+    a failure: counting it would deflate attack-success-rate or accuracy."""
+    return [r for r in rows if not r.get("error")]
+
+
 def attack_success_rate(rows: list[dict]) -> dict:
-    """rows: dicts with 'defenses' and 'attack_succeeded'. Returns per-condition ASR."""
+    """rows: dicts with 'defenses', 'attack_succeeded' and optionally 'error'.
+    Returns per-condition ASR over valid (non-errored) runs only; n may be 0."""
+    rows = valid_runs(rows)
     out = {}
     for defenses in (False, True):
         subset = [r for r in rows if r["defenses"] == defenses]

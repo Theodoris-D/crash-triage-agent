@@ -18,8 +18,13 @@ def _rows(db, run_id, kind):
             db.execute("SELECT * FROM results WHERE run_id=? AND kind=?", (run_id, kind))]
 
 
+def _errors(db, run_id):
+    return db.execute("SELECT COUNT(*) FROM results WHERE run_id=? AND error IS NOT NULL AND error != ''",
+                      (run_id,)).fetchone()[0]
+
+
 def _rate(rows, key):
-    rows = [r for r in rows if r[key] is not None]
+    rows = [r for r in rows if r[key] is not None and not r.get("error")]
     if not rows:
         return None
     return sum(1 for r in rows if r[key] == 1) / len(rows)
@@ -48,6 +53,11 @@ def main():
 
     cap_b, cap_c = _cap(db, args.baseline), _cap(db, args.candidate)
     regressions = []
+    n_err = _errors(db, args.candidate)
+    if n_err:
+        # A gate must not pass on runs that never happened.
+        regressions.append(f"candidate has {n_err} errored run(s)")
+        print(f"candidate {args.candidate}: {n_err} errored run(s), excluded from rates")
     improvements = []
 
     print(f"{'metric':22s} {'baseline':>10s} {'candidate':>10s}  verdict")

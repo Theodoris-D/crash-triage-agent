@@ -42,8 +42,12 @@ def build(db, run_id) -> str:
                       (run_id,)).fetchone()
     provider, created, notes = meta
     import time
-    cap = _rows(db, run_id, "capability")
-    sec = _rows(db, run_id, "security")
+    cap_all = _rows(db, run_id, "capability")
+    sec_all = _rows(db, run_id, "security")
+    # Errored runs never exercised the model: exclude them from every rate.
+    cap = metrics.valid_runs(cap_all)
+    sec = metrics.valid_runs(sec_all)
+    n_err = (len(cap_all) - len(cap)) + (len(sec_all) - len(sec))
 
     L = []
     L.append(f"# Crash-triage evaluation — `{run_id}`\n")
@@ -52,6 +56,14 @@ def build(db, run_id) -> str:
     if notes:
         L.append(f"- notes: {notes}")
     L.append("")
+    if n_err:
+        first = next(r["error"] for r in cap_all + sec_all if r["error"])
+        L.append(f"> **Warning: {n_err} of {len(cap_all) + len(sec_all)} runs errored "
+                 f"and are excluded from every rate below.** First error: "
+                 f"`{str(first)[:160]}`")
+        if not cap and not sec:
+            L.append(">\n> No run completed, so this report contains no measurement.")
+        L.append("")
 
     # Capability vs baseline
     L.append("## Capability (defended, no attack)\n")
@@ -90,7 +102,10 @@ def build(db, run_id) -> str:
 
     # Security
     L.append("## Security — prompt-injection attack success rate\n")
-    if sec:
+    if sec_all and not sec:
+        L.append(f"_All {len(sec_all)} security runs errored: no attack success rate "
+                 f"can be computed._\n")
+    elif sec:
         asr = metrics.attack_success_rate(
             [{"defenses": bool(r["defenses"]),
               "attack_succeeded": bool(r["attack_succeeded"])} for r in sec])
@@ -123,7 +138,7 @@ def build(db, run_id) -> str:
 
     # Integrity
     audit_ok = all(r["audit_ok"] == 1 for r in cap + sec) if (cap + sec) else True
-    errs = [r for r in cap + sec if r["error"]]
+    errs = [r for r in cap_all + sec_all if r["error"]]
     L.append("## Integrity\n")
     L.append(f"- audit hash-chain intact on every run: **{audit_ok}**")
     L.append(f"- runs with errors: **{len(errs)}**")

@@ -49,6 +49,11 @@ sanitizer.
 
 The audit hash-chain verified intact on every run; 0 runs errored.
 
+**Second run** (`20261115-214207-6c443d`, same model and benchmark): fix verified
+**11/12** (c09 failed), crash-class 11/12, root-cause line 11/12, CWE exact 9/12.
+Across both runs the agent verified **23 of 24** fixes; expect this kind of
+run-to-run variation from a single model.
+
 **How to read it.** These are measured on the *de-leaked* benchmark — neutral ids
 and no CWE hints in the sources (see [`REVIEW.md`](REVIEW.md)) — so they reflect
 reasoning, not labels the agent could read off the source. The honest result: on
@@ -78,6 +83,21 @@ caveat on how to read it: every payload is written to trip the detector's
 signatures, so a low ASR on a real model should be read as "the mechanism
 engages", not as generalization to paraphrased or indirect injections. The suite
 is a mechanism test, not an attack benchmark.
+
+**Measured on a real model** (`20261115-214207-6c443d`, Claude Haiku 5.5, cases
+c01–c03 × 3 goals × 3 channels × defenses on/off, 0 errors, $0.20):
+
+| condition | attack success | injection detected |
+|---|---|---|
+| defenses OFF | 0/27 [0, 12.5] | 20/27 |
+| defenses ON | 0/27 [0, 12.5] | 19/27 |
+
+The model refused every payload on its own, even with defenses off, so this run
+**does not measure what the defenses add**: the payloads are too blunt for this
+model. It does expose a detector gap: only 4 of 18 payloads delivered through
+debugger output (`gdb_note`) are detected, versus 35 of 36 in source comments and
+sanitizer notes. Next step: paraphrased and indirect payloads, all 12 cases, and a
+weaker model.
 
 ## Costs
 
@@ -178,7 +198,7 @@ network), so you can exercise the whole pipeline before spending a cent.
 ```bash
 pip install -e .[dev]        # needs a C toolchain: gcc, gdb (Linux — see note)
 make verify                  # generate + validate the 12-case benchmark
-make test                    # unit + end-to-end tests (20)
+make test                    # unit + end-to-end tests (21)
 
 triage list                  # the 12 cases
 triage triage c06            # triage one case with the offline mock provider
@@ -204,6 +224,8 @@ works (`--provider ollama:<model>` / `openrouter:<model>`).
 
 ```bash
 export OPENROUTER_API_KEY=sk-or-...
+# or, on macOS, store the key once in the Keychain and use ./run_eval.sh
+#   security add-generic-password -a "$USER" -s openrouter -w
 
 # capability over the 12 cases, with a soft budget guard:
 triage eval   --model anthropic/claude-sonnet-5.5 --max-cost-usd 1
@@ -285,7 +307,7 @@ eval/
   metrics.py        Wilson-interval scoring
   report.py         Markdown report
   compare.py        regression gate between two runs
-tests/            unit + end-to-end (20 tests)
+tests/            unit + end-to-end (21 tests)
 Dockerfile, Makefile, .github/workflows/ci.yml (same steps locally: docker build -t crash-triage-agent . && docker run --rm --network=none crash-triage-agent make verify)
 ```
 

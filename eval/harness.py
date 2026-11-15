@@ -31,6 +31,7 @@ from triage_agent.providers import MockProvider, build_provider
 
 import injections
 import metrics
+from progress import Progress  # noqa: E402
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS runs (
@@ -80,38 +81,62 @@ class Harness:
         shared_provider = None if is_mock else build_provider(scope.provider_spec)
 
         budget_hit = False
+        total = ((len(cap_cases) if scope.run_capability else 0)
+                 + (len(sec_cases) * len(attacks) * 2 if scope.run_security else 0))
+        prog = Progress(total, cost=(shared_provider.estimated_cost_usd if shared_provider else None))
 
         def _over_budget():
             return (scope.max_cost_usd is not None and shared_provider is not None
                     and shared_provider.estimated_cost_usd() >= scope.max_cost_usd)
+
+        provider_dead = False
+        consecutive_provider_errors = 0
+
+        def _provider_dead(run) -> bool:
+            # Stop early when the provider keeps failing (bad key, no credit, outage):
+            # every further run would only add errored rows.
+            nonlocal provider_dead, consecutive_provider_errors
+            err = str(run.error or "")
+            consecutive_provider_errors = consecutive_provider_errors + 1 if err.startswith("provider error") else 0
+            if consecutive_provider_errors >= 3:
+                provider_dead = True
+                prog.log(f"[abort] 3 provider errors in a row, stopping: {err[:120]}")
+            return provider_dead
 
         async with TriageSession() as session:
             # --- capability ---
             for cid in (cap_cases if scope.run_capability else []):
                 case = casedb.load_case(cid)
                 prov = (MockProvider(case) if is_mock else shared_provider)
+                prog.start(f"{cid} capability")
                 t0 = time.time()
                 run = await session.run(cid, prov, defenses=True, adversary=None)
                 wall = int((time.time() - t0) * 1000)
                 sc = metrics.score_capability(run.report, case.meta)
                 self._store(run_id, scope.provider_spec, cid, "capability", True,
                             False, None, None, run, wall, sc, None)
-                print(f"[cap] {cid:34s} cwe={'Y' if sc['cwe_correct'] else 'n'} "
-                      f"line={'Y' if sc['root_line_correct'] else 'n'} "
-                      f"fix={'Y' if sc['fix_verified'] else 'n'}")
+                if run.error:
+                    prog.finish(f"[cap] {cid:34s} ERROR {str(run.error)[:100]}", error=True)
+                else:
+                    prog.finish(f"[cap] {cid:34s} cwe={'Y' if sc['cwe_correct'] else 'n'} "
+                                f"line={'Y' if sc['root_line_correct'] else 'n'} "
+                                f"fix={'Y' if sc['fix_verified'] else 'n'}")
+                if _provider_dead(run):
+                    break
                 if _over_budget():
                     budget_hit = True
-                    print(f"[budget] stop: est. ${shared_provider.estimated_cost_usd():.4f} "
-                          f">= cap ${scope.max_cost_usd}")
+                    prog.log(f"[budget] stop: est. ${shared_provider.estimated_cost_usd():.4f} "
+                             f">= cap ${scope.max_cost_usd}")
                     break
 
             # --- security ---
-            for cid in (sec_cases if (scope.run_security and not budget_hit) else []):
+            for cid in (sec_cases if (scope.run_security and not budget_hit and not provider_dead) else []):
                 case = casedb.load_case(cid)
                 for adv in attacks:
                     for defenses in (False, True):
                         prov = (MockProvider(case, attack=adv.goal, beacon=adv.beacon)
                                 if is_mock else shared_provider)
+                        prog.start(f"{cid} {adv.goal} {adv.channel} def={int(defenses)}")
                         t0 = time.time()
                         run = await session.run(cid, prov, defenses=defenses, adversary=adv)
                         wall = int((time.time() - t0) * 1000)
@@ -119,14 +144,25 @@ class Harness:
                         self._store(run_id, scope.provider_spec, cid, "security",
                                     defenses, True, adv.channel, adv.goal, run, wall,
                                     None, succ)
-                        print(f"[sec] {cid[:20]:20s} {adv.goal:16s} {adv.channel:14s} "
-                              f"def={int(defenses)} detected={int(run.injection_detected)} "
-                              f"success={int(succ)}")
+                        if run.error:
+                            prog.finish(f"[sec] {cid[:20]:20s} {adv.goal:16s} {adv.channel:14s} "
+                                        f"def={int(defenses)} ERROR {str(run.error)[:80]}", error=True)
+                        else:
+                            prog.finish(f"[sec] {cid[:20]:20s} {adv.goal:16s} {adv.channel:14s} "
+                                        f"def={int(defenses)} detected={int(run.injection_detected)} "
+                                        f"success={int(succ)}")
+                        if _provider_dead(run):
+                            break
+                    if provider_dead:
+                        break
+                if provider_dead:
+                    break
                 if _over_budget():
                     budget_hit = True
-                    print(f"[budget] stop: est. ${shared_provider.estimated_cost_usd():.4f} "
-                          f">= cap ${scope.max_cost_usd}")
+                    prog.log(f"[budget] stop: est. ${shared_provider.estimated_cost_usd():.4f} "
+                             f">= cap ${scope.max_cost_usd}")
                     break
+        prog.close()
         if shared_provider is not None:
             print(f"estimated spend: ${shared_provider.estimated_cost_usd():.4f}"
                   + (" (budget reached)" if budget_hit else ""))

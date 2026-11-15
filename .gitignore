@@ -17,3 +17,4 @@ eval/report.md
 *.tar.gz
 *.asan
 .pytest_cache/
+eval/*.db-journal

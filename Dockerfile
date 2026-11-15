@@ -18,6 +18,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
+# stream output (and the progress bar) live instead of at exit
+ENV PYTHONUNBUFFERED=1
 COPY pyproject.toml requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt pytest
 

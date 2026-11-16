@@ -26,5 +26,16 @@ RUN pip install --no-cache-dir -r requirements.txt pytest
 COPY . .
 RUN pip install --no-cache-dir -e . && python benchmark/gen_cases.py
 
+# Optional: hybrid CWE retrieval (BM25 + bge-small embeddings in ChromaDB).
+#   docker build --build-arg WITH_RAG=1 -t crash-triage-agent:rag .
+# CPU-only torch keeps the image small; the embedding model is fetched at build
+# time so runs need no Hugging Face download.
+ARG WITH_RAG=0
+RUN if [ "$WITH_RAG" = "1" ]; then \
+      pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
+      pip install --no-cache-dir -e ".[rag]" && \
+      python -c "from sentence_transformers import SentenceTransformer as S; S('BAAI/bge-small-en-v1.5')"; \
+    fi
+
 # Default: prove the benchmark and run the offline evaluation.
 CMD ["make", "verify"]

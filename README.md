@@ -112,11 +112,11 @@ agent itself wrote** in the two Haiku 5.5 runs. Full table:
 
 | top-1 CWE (curated 18 entries) | NVD (n=288) | agent explanations (n=24) |
 |---|---|---|
-| keyword (old tool) | 52% [47-58] | 71% [51-85] |
-| BM25 | 50% [45-56] | 92% [74-98] |
-| bge-small-en-v1.5 (dense) | 58% [52-63] | 92% [74-98] |
-| **hybrid BM25 + bge-small** | **61% [55-66]**, McNemar p=0.006 | **96% [80-99]**, p=0.031 |
-| bge-small + bge-reranker-base | 75% [69-79] | 25% [12-45] |
+| keyword (old tool) | 151/288 = 52% [47-58] | 17/24 |
+| BM25 | 145/288 = 50% [45-56] | 22/24 |
+| bge-small-en-v1.5 (dense) | 166/288 = 58% [52-63] | 22/24 |
+| **hybrid BM25 + bge-small** | **175/288 = 61% [55-66]**, McNemar p=0.006 | **23/24**, p=0.031 |
+| bge-small + bge-reranker-base | 215/288 = 75% [69-79] | 6/24 |
 
 What it shows:
 - **The hybrid wins on both sets** and is significantly better than the old tool
@@ -129,9 +129,21 @@ What it shows:
 - **The reranker does not transfer.** The cross-encoder is the best on short CVE
   descriptions (75%) but collapses on the agent's longer explanations (25%), and
   costs ~1 s per query. Not yet explained; it is not used.
+- **Better retrieval did not make the agent better at naming the CWE.** Two
+  real runs with the hybrid (`20261116-203534-1668cb`, `20261116-203751-f9bbb0`,
+  Haiku 5.5, about $0.04 each): CWE exact **19/24**, against **18/24** over the
+  two keyword runs; fixes verified 23/24, as before. The misses are the same
+  three cases in every run, and none is a retrieval failure: the agent names the
+  *consequence* instead of the *root cause* (c10 off-by-one CWE-193 -> CWE-121
+  stack overflow; c11 signed-to-unsigned CWE-195 -> CWE-121/787; c12 unchecked
+  negative index CWE-129 -> CWE-124 buffer underwrite). The bottleneck is which
+  level of the CWE hierarchy the model chooses, not what the lookup returns; the
+  next step is a prompt or verifier rule that asks for the root-cause weakness.
 - Limits: NVD labels are noisy (often one level off, hence the "one-hop" column in
-  the report); n=24 for agent queries is small; retrieval accuracy is not CWE
-  accuracy of the agent end to end, which needs a new real-model run.
+  the report); the agent query set is small (24) and is the same text the
+  retrievers were compared on, so its 23/24 is optimistic: lead with the NVD
+  number. No retriever parameter was tuned (RRF k=60, models off the shelf), but
+  the hybrid was *selected* on these two sets.
 
 ## Costs
 

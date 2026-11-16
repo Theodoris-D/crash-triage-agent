@@ -1,0 +1,1442 @@
+[
+ {
+  "cve": "CVE-2026-73070",
+  "cwe": "CWE-121",
+  "text": "Vim is an open source, command line text editor. Prior to 9.2.0842, the socket server backend in src/socketserver.c accepts unbounded client connections in socketserver_accept(), causing descriptors to overflow fd_set structures in src/channel.c and fixed-size struct pollfd arrays in src/os_unix.c, which allows a local process that can connect to the server socket to corrupt stack memory or terminate the Vim server. This issue is fixed in version 9.2.0842."
+ },
+ {
+  "cve": "CVE-2026-24911",
+  "cwe": "CWE-121",
+  "text": "Stack-based buffer overflow for some Intel(R) PROSet/Wireless WiFi Software for Windows within Ring 0: Kernel may allow a denial of service. Unprivileged software adversary with an unauthenticated user combined with a low complexity attack may enable denial of service. This result may potentially occur via adjacent access when attack requirements are not present without special internal knowledge and requires no user interaction. The potential vulnerability may impact the confidentiality (none), integrity (none) and availability (high) of the vulnerable system, resulting in subsequent system confidentiality (none), integrity (none) and availability (high) impacts."
+ },
+ {
+  "cve": "CVE-2026-57162",
+  "cwe": "CWE-121",
+  "text": "PJSIP is a free and open source multimedia communication library written in C. Prior to commit a1b707c, a stack buffer overflow exists in the SRTP/SDES media transport when processing a=crypto attributes during SDP offer/answer (sdes_encode_sdp() in transport_srtp_sdes.c). This affects applications with SRTP enabled (use_srtp optional or mandatory, using SDES keying). During media negotiation, the crypto attributes from the remote SDP are collected into a fixed-size array without bounding their number; a remote peer that includes an excessive number of a=crypto attributes in a single media description can write past the end of that array on the stack. This is reachable from an incoming SIP INVITE during offer/answer, before application-level authentication. Impact may range from unexpected application termination to control flow hijack/memory corruption. Applications that do not enable SRTP are not affected. This issue has been patched via commit a1b707c."
+ },
+ {
+  "cve": "CVE-2026-57163",
+  "cwe": "CWE-121",
+  "text": "PJSIP is a free and open source multimedia communication library written in C. Prior to commit c4a151a, a stack buffer overflow exists in the GnuTLS TLS backend when parsing the Subject Alternative Name extension of a peer certificate (tls_cert_get_info() in ssl_sock_gtls.c). Only GnuTLS builds are affected (--with-gnutls); OpenSSL and Apple SecureTransport/Network.framework builds are not affected. While extracting certificate information after a TLS handshake, an incorrect buffer-size value can cause an oversized SubjectAltName entry to be written past the end of a fixed-size stack buffer. A network-positioned attacker presenting a crafted certificate \u2014 a malicious server to a connecting client, or a malicious client to a server that requests certificates \u2014 can trigger this during the TLS handshake, before any SIP-level authentication. Impact may range from unexpected application termination to control flow hijack/memory corruption. This issue has been patched via commit c4a151a."
+ },
+ {
+  "cve": "CVE-2026-109940",
+  "cwe": "CWE-121",
+  "text": "FreeRDP 3.0.0-beta1 before 3.32.0 on Unix builds with PKCS#11 support has a stack-based buffer overflow in wprintKeyName() in WinPR's NCrypt PKCS#11 provider. It hex-encodes a key's CKA_ID, which can be up to 64 bytes, into a fixed 128-byte stack buffer. An attacker supplying a malicious PKCS#11 token or module whose key and matching certificate use a 55- to 64-byte CKA_ID can overflow the client's stack during key enumeration, causing a crash."
+ },
+ {
+  "cve": "CVE-2026-29508",
+  "cwe": "CWE-121",
+  "text": "ReadyMedia (formerly MiniDLNA) versions 1.3.0 through 1.3.3 contain a stack-based buffer overflow vulnerability that allows remote attackers to corrupt stack memory by crafting a malicious DFF audio file with an oversized PROP chunk size value that is used unvalidated to allocate a variable-length stack array and read file data into it. Attackers can place a crafted DFF file in a directory monitored by ReadyMedia to trigger automatic parsing via inotify, achieving remote code execution on unprotected builds or denial of service on hardened builds with stack protections."
+ },
+ {
+  "cve": "CVE-2026-123202",
+  "cwe": "CWE-121",
+  "text": "libnxml before 0.18.6 contains a stack-based buffer overflow vulnerability in src/nxml_parser.c that allows remote attackers to write past a 1024-byte stack buffer via long XML names. Attackers can supply XML or RSS feeds with a 1022-character element, attribute, DOCTYPE or entity name ending in a multi-byte UTF-8 character to crash parsing applications."
+ },
+ {
+  "cve": "CVE-2026-35500",
+  "cwe": "CWE-121",
+  "text": "Stack-based buffer overflow in the UEFI firmware for the Intel(R) Slim Bootloader within Ring 0: Bare Metal OS may allow an escalation of privilege. Startup code and smm adversary with an unauthenticated user combined with a low complexity attack may enable escalation of privilege. This result may potentially occur via physical access when attack requirements are not present without special internal knowledge and requires no user interaction. The potential vulnerability may impact the confidentiality (high), integrity (high) and availability (high) of the vulnerable system, resulting in subsequent system confidentiality (high), integrity (high) and availability (high) impacts."
+ },
+ {
+  "cve": "CVE-2026-42056",
+  "cwe": "CWE-121",
+  "text": "Stack-based buffer overflow for some Intel(R) Wireless Bluetooth(R) within Ring 0: Kernel may allow a denial of service. Unprivileged software adversary with an unauthenticated user combined with a low complexity attack may enable denial of service. This result may potentially occur via adjacent access when attack requirements are present without special internal knowledge and requires no user interaction. The potential vulnerability may impact the confidentiality (none), integrity (none) and availability (high) of the vulnerable system, resulting in subsequent system confidentiality (none), integrity (none) and availability (none) impacts."
+ },
+ {
+  "cve": "CVE-2026-119948",
+  "cwe": "CWE-121",
+  "text": "Stack-based buffer overflow in Windows Active Directory allows an authorized attacker to execute code over a network."
+ },
+ {
+  "cve": "CVE-2026-109163",
+  "cwe": "CWE-121",
+  "text": "Stack-based buffer overflow vulnerability in Apache HTTP Server's mod_vhost_alias (after\u00a0CVE-2026-63292)\n\n\n\nThis issue affects Apache HTTP Server: 2.4.69."
+ },
+ {
+  "cve": "CVE-2026-75488",
+  "cwe": "CWE-121",
+  "text": "Cudy TR3000 before 2.5.42 contains a stack buffer overflow vulnerability in the CWMP client that allows a malicious ACS to corrupt stack memory via oversized credentials. Attackers controlling the ACS can send Username and Password values up to 256 bytes in TR-069 Download or Upload requests, overflowing 128-byte stack buffers and crashing the CWMP process."
+ },
+ {
+  "cve": "CVE-2026-75492",
+  "cwe": "CWE-121",
+  "text": "Cudy TR3000 before 2.5.42 contains an unauthenticated stack buffer overflow vulnerability in the stun_client TR-111 UDP Connection Request parser that parses requests before verifying username or HMAC. Remote attackers can send a single crafted UDP datagram lacking a space in the request line, causing strncpy() to overflow a 10-byte stack buffer and crash stun_client for denial of service."
+ },
+ {
+  "cve": "CVE-2026-109093",
+  "cwe": "CWE-121",
+  "text": "A stack buffer overflow in\u00a0\u00a0ProcXTestFakeInput DeviceValuator handling in X.Org xwayland before 24.1.15 and X server before 21.1.26 could be used by authenticated clients to crash or execute code in the X server."
+ },
+ {
+  "cve": "CVE-2026-109445",
+  "cwe": "CWE-121",
+  "text": "PLANET GS-5220-8P2T2S (hardware version 3.0) firmware versions before 3.2412b261008 contains a stack-based buffer overflow vulnerability that allows unauthenticated attackers to corrupt stack memory by submitting an oversized webstax_auth HTTP Cookie value that is copied into a fixed-size stack buffer without length validation. Attackers can send a crafted unauthenticated HTTP request with an oversized cookie to overwrite the saved return address and corrupt stack memory, leading to memory corruption and potential denial of service on the device."
+ },
+ {
+  "cve": "CVE-2026-115501",
+  "cwe": "CWE-121",
+  "text": "IBM i 7.3 7.4, 7.5, and 7.6\u00a0is vulnerable to a stack buffer overflow, caused by improper bounds checking in the QFileSvr.400 file system. By sending a command in the QFileSvr.400 file system, a local authenticated attacker could cause undefined behavior."
+ },
+ {
+  "cve": "CVE-2026-27238",
+  "cwe": "CWE-122",
+  "text": "InDesign Desktop versions 20.5.2, 21.2 and earlier are affected by a Heap-based Buffer Overflow vulnerability that could result in arbitrary code execution in the context of the current user. Exploitation of this issue requires user interaction in that a victim must open a malicious file."
+ },
+ {
+  "cve": "CVE-2026-58471",
+  "cwe": "CWE-122",
+  "text": "GNU Wget through 1.25.0, fixed in commit c2640fe, contains a heap buffer overflow vulnerability in the convert_fname() function within src/url.c that allows remote attackers to trigger memory corruption through a server-supplied filename requiring character set conversion. When the output buffer is too small during iconv E2BIG reallocation, the reallocation logic miscalculates the remaining space, leading to a heap buffer overflow that can be exploited via a maliciously crafted server response."
+ },
+ {
+  "cve": "CVE-2026-64830",
+  "cwe": "CWE-122",
+  "text": "FFmpeg versions 2.1 through 8.1.2 contains a heap buffer overflow vulnerability in the VobSub subtitle demuxer that allows attackers to corrupt adjacent heap memory by supplying a malicious .sub/.idx subtitle file declaring more distinct stream IDs than the fixed-size array bounds in libavformat/mpeg.c. Attackers can craft a subtitle file with excessive distinct stream IDs to trigger unbounded writes beyond the vobsub->q[] array boundary via ff_subtitles_queue_insert(), potentially achieving arbitrary code execution in any application using FFmpeg's VobSub demuxer."
+ },
+ {
+  "cve": "CVE-2026-21399",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow for the Intel(R) Open Volume Kernel Library (Intel(R) Open VKL) library maintained by intel(R) before version 2.0.2 within Ring 3: User Applications may allow a denial of service. System software adversary with an authenticated user combined with a low complexity attack may enable denial of service. This result may potentially occur via local access when attack requirements are not present without special internal knowledge and requires no user interaction. The potential vulnerability may impact the confidentiality (none), integrity (low) and availability (high) of the vulnerable system, resulting in subsequent system confidentiality (none), integrity (none) and availability (none) impacts."
+ },
+ {
+  "cve": "CVE-2026-74045",
+  "cwe": "CWE-122",
+  "text": "Wazuh from 3.12.0 before 4.14.8 contains a heap buffer overflow in fim_generate_alert() where full_log is sized from input but written bounded by OS_MAXSTR. An enrolled agent can send a crafted FIM syscheck event to corrupt manager heap memory and deterministically crash wazuh-analysisd, causing a fleet-wide detection outage."
+ },
+ {
+  "cve": "CVE-2026-113163",
+  "cwe": "CWE-122",
+  "text": "Buffer overflow in WebGL in Google Chrome on on Android prior to 156.0.8078.47 allowed a remote attacker to potentially execute arbitrary code outside the sandbox via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-113273",
+  "cwe": "CWE-122",
+  "text": "Buffer overflow in ANGLE in Google Chrome prior to 156.0.8078.47 allowed a remote attacker to potentially execute arbitrary code outside the sandbox via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-113334",
+  "cwe": "CWE-122",
+  "text": "Buffer overflow in ANGLE in Google Chrome on on Windows prior to 156.0.8078.47 allowed a remote attacker to execute arbitrary code outside the sandbox via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-118318",
+  "cwe": "CWE-122",
+  "text": "Buffer overflow in V8 in Google Chrome prior to 156.0.8078.73 allowed a remote attacker to execute arbitrary code inside the sandbox via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-118333",
+  "cwe": "CWE-122",
+  "text": "Buffer overflow in Video in Google Chrome prior to 156.0.8078.73 allowed a remote attacker to execute arbitrary code inside the sandbox via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-118345",
+  "cwe": "CWE-122",
+  "text": "Buffer overflow in PDFium in Google Chrome prior to 156.0.8078.73 allowed a remote attacker to execute arbitrary code inside the sandbox via a crafted PDF file. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-119261",
+  "cwe": "CWE-122",
+  "text": "Buffer overflow in Skia in Google Chrome prior to 156.0.8078.79 allowed a remote attacker who had compromised the renderer process to potentially execute arbitrary code outside the sandbox via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-34017",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow for some Hyperscan before version v5.4.2.1 within Ring 3: User Applications may allow a denial of service. Unprivileged software adversary with an unauthenticated user combined with a low complexity attack may enable denial of service. This result may potentially occur via local access when attack requirements are present without special internal knowledge and requires passive user interaction. The potential vulnerability may impact the confidentiality (none), integrity (low) and availability (high) of the vulnerable system, resulting in subsequent system confidentiality (none), integrity (none) and availability (none) impacts."
+ },
+ {
+  "cve": "CVE-2026-63540",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow for some Hyperscan before version v5.4.2.1 within Ring 3: User Applications may allow a denial of service. Unprivileged software adversary with an unauthenticated user combined with a low complexity attack may enable denial of service. This result may potentially occur via local access when attack requirements are not present without special internal knowledge and requires passive user interaction. The potential vulnerability may impact the confidentiality (none), integrity (low) and availability (high) of the vulnerable system, resulting in subsequent system confidentiality (none), integrity (none) and availability (none) impacts."
+ },
+ {
+  "cve": "CVE-2026-119916",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow in Windows Input System allows an authorized attacker to elevate privileges locally."
+ },
+ {
+  "cve": "CVE-2026-119917",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow in Windows Distributed Transaction Coordinator allows an authorized attacker to elevate privileges locally."
+ },
+ {
+  "cve": "CVE-2026-119919",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow in Windows Distributed Transaction Coordinator allows an authorized attacker to elevate privileges locally."
+ },
+ {
+  "cve": "CVE-2026-119937",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow in Microsoft Streaming Service allows an authorized attacker to elevate privileges with a physical attack."
+ },
+ {
+  "cve": "CVE-2026-119938",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow in Windows Shell allows an unauthorized attacker to execute code over a network."
+ },
+ {
+  "cve": "CVE-2026-119944",
+  "cwe": "CWE-122",
+  "text": "Heap-based buffer overflow in Windows Mobile Device Management allows an unauthorized attacker to elevate privileges over a network."
+ },
+ {
+  "cve": "CVE-2004-0183",
+  "cwe": "CWE-125",
+  "text": "TCPDUMP 3.8.1 and earlier allows remote attackers to cause a denial of service (crash) via ISAKMP packets containing a Delete payload with a large number of SPI's, which causes an out-of-bounds read, as demonstrated by the Striker ISAKMP Protocol Test Suite."
+ },
+ {
+  "cve": "CVE-2004-0221",
+  "cwe": "CWE-125",
+  "text": "isakmpd in OpenBSD 3.4 and earlier allows remote attackers to cause a denial of service (crash) via an ISAKMP packet with a delete payload containing a large number of SPIs, which triggers an out-of-bounds read error, as demonstrated by the Striker ISAKMP Protocol Test Suite."
+ },
+ {
+  "cve": "CVE-2004-0421",
+  "cwe": "CWE-125",
+  "text": "The Portable Network Graphics library (libpng) 1.0.15 and earlier allows attackers to cause a denial of service (crash) via a malformed PNG image file that triggers an error that causes an out-of-bounds read when creating the error message."
+ },
+ {
+  "cve": "CVE-2004-0112",
+  "cwe": "CWE-125",
+  "text": "The SSL/TLS handshaking code in OpenSSL 0.9.7a, 0.9.7b, and 0.9.7c, when using Kerberos ciphersuites, does not properly check the length of Kerberos tickets during a handshake, which allows remote attackers to cause a denial of service (crash) via a crafted SSL/TLS handshake that causes an out-of-bounds read."
+ },
+ {
+  "cve": "CVE-2004-1940",
+  "cwe": "CWE-125",
+  "text": "sipclient.cpp in KPhone 4.0.1 and earlier allows remote attackers to cause a denial of service (crash) via a STUN response packet with a large attrLen value that causes an out-of-bounds read."
+ },
+ {
+  "cve": "CVE-2007-3847",
+  "cwe": "CWE-125",
+  "text": "The date handling code in modules/proxy/proxy_util.c (mod_proxy) in Apache 2.3.0, when using a threaded MPM, allows remote origin servers to cause a denial of service (caching forward proxy process crash) via crafted date headers that trigger a buffer over-read."
+ },
+ {
+  "cve": "CVE-2011-0984",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 9.0.597.94 does not properly handle plug-ins, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-1113",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 9.0.597.107 on 64-bit Linux platforms does not properly perform pickle deserialization, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-1120",
+  "cwe": "CWE-125",
+  "text": "The WebGL implementation in Google Chrome before 9.0.597.107 allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors, aka Issue 71717."
+ },
+ {
+  "cve": "CVE-2011-1122",
+  "cwe": "CWE-125",
+  "text": "The WebGL implementation in Google Chrome before 9.0.597.107 allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors, aka Issue 71960."
+ },
+ {
+  "cve": "CVE-2011-1192",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 10.0.648.127 on Linux does not properly handle Unicode ranges, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-1445",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 11.0.696.57 does not properly handle SVG documents, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-1455",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 11.0.696.57 does not properly handle PDF documents with multipart encoding, which allows remote attackers to cause a denial of service (out-of-bounds read) via a crafted document."
+ },
+ {
+  "cve": "CVE-2011-2345",
+  "cwe": "CWE-125",
+  "text": "The NPAPI implementation in Google Chrome before 12.0.742.112 does not properly handle strings, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-2501",
+  "cwe": "CWE-125",
+  "text": "The png_format_buffer function in pngerror.c in libpng 1.0.x before 1.0.55, 1.2.x before 1.2.45, 1.4.x before 1.4.8, and 1.5.x before 1.5.4 allows remote attackers to cause a denial of service (application crash) via a crafted PNG image that triggers an out-of-bounds read during the copying of error-message data.  NOTE: this vulnerability exists because of a CVE-2004-0421 regression. NOTE: this is called an off-by-one error by some sources."
+ },
+ {
+  "cve": "CVE-2011-2794",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 13.0.782.107 does not properly perform text iteration, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-2803",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 13.0.782.107 does not properly handle Skia paths, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-2843",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 14.0.835.163 does not properly handle media buffers, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-2844",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 14.0.835.163 does not properly process MP3 files, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2011-2850",
+  "cwe": "CWE-125",
+  "text": "Google Chrome before 14.0.835.163 does not properly handle Khmer characters, which allows remote attackers to cause a denial of service (out-of-bounds read) via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2003-0721",
+  "cwe": "CWE-129",
+  "text": "Integer signedness error in rfc2231_get_param from strings.c in PINE before 4.58 allows remote attackers to execute arbitrary code via an email that causes an out-of-bounds array access using a negative number."
+ },
+ {
+  "cve": "CVE-2005-0369",
+  "cwe": "CWE-129",
+  "text": "Armagetron 0.2.6.0 and earlier and Armagetron Advanced 0.2.7.0 earlier allows remote attackers to cause a denial of service (application crash) via a packet with a large (1) descriptor ID or (2) claim_id, which exceeds the boundaries of an array."
+ },
+ {
+  "cve": "CVE-2007-5756",
+  "cwe": "CWE-129",
+  "text": "Multiple array index errors in the bpf_filter_init function in NPF.SYS in WinPcap before 4.0.2, when run in monitor mode (aka Table Management Extensions or TME), and as used in Wireshark and possibly other products, allow local users to gain privileges via crafted IOCTL requests."
+ },
+ {
+  "cve": "CVE-2009-3080",
+  "cwe": "CWE-129",
+  "text": "Array index error in the gdth_read_event function in drivers/scsi/gdth.c in the Linux kernel before 2.6.32-rc8 allows local users to cause a denial of service or possibly gain privileges via a negative event index in an IOCTL request."
+ },
+ {
+  "cve": "CVE-2010-2806",
+  "cwe": "CWE-129",
+  "text": "Array index error in the t42_parse_sfnts function in type42/t42parse.c in FreeType before 2.4.2 allows remote attackers to cause a denial of service (application crash) or possibly execute arbitrary code via negative size values for certain strings in FontType42 font files, leading to a heap-based buffer overflow."
+ },
+ {
+  "cve": "CVE-2011-1169",
+  "cwe": "CWE-129",
+  "text": "Array index error in the asihpi_hpi_ioctl function in sound/pci/asihpi/hpioctl.c in the AudioScience HPI driver in the Linux kernel before 2.6.38.1 might allow local users to cause a denial of service (memory corruption) or possibly gain privileges via a crafted adapter index value that triggers access to an invalid kernel pointer."
+ },
+ {
+  "cve": "CVE-2014-6317",
+  "cwe": "CWE-129",
+  "text": "Array index error in win32k.sys in the kernel-mode drivers in Microsoft Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, Windows Server 2012 Gold and R2, and Windows RT Gold and 8.1 allows remote attackers to cause a denial of service (reboot) via a crafted TrueType font, aka \"Denial of Service in Windows Kernel Mode Driver Vulnerability.\""
+ },
+ {
+  "cve": "CVE-2016-7170",
+  "cwe": "CWE-129",
+  "text": "The vmsvga_fifo_run function in hw/display/vmware_vga.c in QEMU (aka Quick Emulator) allows local guest OS administrators to cause a denial of service (out-of-bounds write and QEMU process crash) via vectors related to cursor.mask[] and cursor.image[] array sizes when processing a DEFINE_CURSOR svga command."
+ },
+ {
+  "cve": "CVE-2016-8815",
+  "cwe": "CWE-129",
+  "text": "All versions of NVIDIA Windows GPU Display Driver contain a vulnerability in the kernel mode layer (nvlddmkm.sys) handler for DxgDdiEscape where a value passed from a user to the driver is used without validation as the index to an array, leading to denial of service or potential escalation of privileges."
+ },
+ {
+  "cve": "CVE-2016-8816",
+  "cwe": "CWE-129",
+  "text": "All versions of NVIDIA Windows GPU Display Driver contain a vulnerability in the kernel mode layer (nvlddmkm.sys) handler for DxgDdiEscape where a value passed from a user to the driver is used without validation as the index to an array, leading to denial of service or potential escalation of privileges."
+ },
+ {
+  "cve": "CVE-2017-0322",
+  "cwe": "CWE-129",
+  "text": "All versions of NVIDIA Windows GPU Display Driver contain a vulnerability in the kernel mode layer (nvlddmkm.sys) handler where a value passed from a user to the driver is not correctly validated and used as the index to an array, leading to denial of service or potential escalation of privileges."
+ },
+ {
+  "cve": "CVE-2016-9053",
+  "cwe": "CWE-129",
+  "text": "An exploitable out-of-bounds indexing vulnerability exists within the RW fabric message particle type of Aerospike Database Server 3.10.0.3. A specially crafted packet can cause the server to fetch a function table outside the bounds of an array resulting in remote code execution. An attacker can simply connect to the port to trigger this vulnerability."
+ },
+ {
+  "cve": "CVE-2017-7228",
+  "cwe": "CWE-129",
+  "text": "An issue (known as XSA-212) was discovered in Xen, with fixes available for 4.8.x, 4.7.x, 4.6.x, 4.5.x, and 4.4.x. The earlier XSA-29 fix introduced an insufficient check on XENMEM_exchange input, allowing the caller to drive hypervisor memory accesses outside of the guest provided input/output arrays."
+ },
+ {
+  "cve": "CVE-2017-0345",
+  "cwe": "CWE-129",
+  "text": "All versions of the NVIDIA Windows GPU Display Driver contain a vulnerability in the kernel mode layer (nvlddmkm.sys) handler for DxgDdiEscape where user provided input used as an array size is not correctly validated allows out of bound access in kernel memory and may lead to denial of service or potential escalation of privileges"
+ },
+ {
+  "cve": "CVE-2017-0347",
+  "cwe": "CWE-129",
+  "text": "All versions of the NVIDIA Windows GPU Display Driver contain a vulnerability in the kernel mode layer (nvlddmkm.sys) handler for DxgkDdiEscape where a value passed from a user to the driver is not correctly validated and used as the index to an array, which may lead to denial of service or potential escalation of privileges."
+ },
+ {
+  "cve": "CVE-2014-9948",
+  "cwe": "CWE-129",
+  "text": "In TrustZone in all Android releases from CAF using the Linux kernel, an Improper Validation of Array Index vulnerability could potentially exist."
+ },
+ {
+  "cve": "CVE-2017-8797",
+  "cwe": "CWE-129",
+  "text": "The NFSv4 server in the Linux kernel before 4.11.3 does not properly validate the layout type when processing the NFSv4 pNFS GETDEVICEINFO or LAYOUTGET operand in a UDP packet from a remote attacker. This type value is uninitialized upon encountering certain error conditions. This value is used as an array index for dereferencing, which leads to an OOPS and eventually a DoS of knfsd and a soft-lockup of the whole system."
+ },
+ {
+  "cve": "CVE-2017-0716",
+  "cwe": "CWE-129",
+  "text": "A remote code execution vulnerability in the Android media framework (libmpeg2). Product: Android. Versions: 6.0, 6.0.1, 7.0, 7.1.1, 7.1.2. Android ID: A-37203196."
+ },
+ {
+  "cve": "CVE-2017-0737",
+  "cwe": "CWE-129",
+  "text": "A elevation of privilege vulnerability in the Android media framework (libstagefright). Product: Android. Versions: 4.4.4, 5.0.2, 5.1.1, 6.0, 6.0.1, 7.0, 7.1.1, 7.1.2. Android ID: A-37563942."
+ },
+ {
+  "cve": "CVE-2016-10386",
+  "cwe": "CWE-129",
+  "text": "In all Qualcomm products with Android releases from CAF using the Linux kernel, an array index out of bounds vulnerability exists in LPP."
+ },
+ {
+  "cve": "CVE-2002-0159",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in the administration function in Cisco Secure Access Control Server (ACS) for Windows, 2.6.x and earlier and 3.x through 3.01 (build 40), allows remote attackers to crash the CSADMIN  module only (denial of service of administration function) or execute arbitrary code via format strings in the URL to port 2002."
+ },
+ {
+  "cve": "CVE-2003-0738",
+  "cwe": "CWE-134",
+  "text": "The calendar module in phpWebSite 0.9.x and earlier allows remote attackers to cause a denial of service (crash) via a long year parameter."
+ },
+ {
+  "cve": "CVE-2003-1381",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in AMX 0.9.2 and earlier, a plugin for Valve Software's Half-Life Server, allows remote attackers to execute arbitrary commands via format string specifiers in the amx_say command."
+ },
+ {
+  "cve": "CVE-2004-0179",
+  "cwe": "CWE-134",
+  "text": "Multiple format string vulnerabilities in (1) neon 0.24.4 and earlier, and other products that use neon including (2) Cadaver, (3) Subversion, and (4) OpenOffice, allow remote malicious WebDAV servers to execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2004-0777",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in the auth_debug function in Courier-IMAP 1.6.0 through 2.2.1 and 3.x through 3.0.3, when login debugging (DEBUG_LOGIN) is enabled, allows remote attackers to execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2004-1628",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in log.c in rssh before 2.2.2 allows remote authenticated users to execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2004-2386",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in the LogMsg function in sercd before 2.3.1 and sredird 2.2.1 and earlier allows remote attackers to execute arbitrary code via format string specifiers passed from the HandleCPCCommand function."
+ },
+ {
+  "cve": "CVE-2004-2714",
+  "cwe": "CWE-134",
+  "text": "Unspecified vulnerability in Window Maker 0.80.2 and earlier allows attackers to perform unknown actions via format string specifiers in a font specification in WMGLOBAL, probably a format string vulnerability."
+ },
+ {
+  "cve": "CVE-2005-1122",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in cgi.c for Monkey daemon (monkeyd) before 0.9.1 allows remote attackers to cause a denial of service and possibly execute arbitrary code via an HTTP GET request containing double-encoded format string specifiers (aka \"double expansion error\")."
+ },
+ {
+  "cve": "CVE-2005-1394",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in ArcGIS for ESRI ArcInfo Workstation 9.0 allows local users to gain privileges via format string specifiers in the ARCHOME environment variable to (1) wservice or (2) lockmgr."
+ },
+ {
+  "cve": "CVE-2005-3154",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in the logging functionality in BitDefender AntiVirus 7.2 through 9 allows remote attackers to cause a denial of service and possibly execute arbitrary code via format string specifiers in file or directory name."
+ },
+ {
+  "cve": "CVE-2005-3656",
+  "cwe": "CWE-134",
+  "text": "Multiple format string vulnerabilities in logging functions in mod_auth_pgsql before 2.0.3, when used for user authentication against a PostgreSQL database, allows remote unauthenticated attackers to execute arbitrary code, as demonstrated via the username."
+ },
+ {
+  "cve": "CVE-2006-0082",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in the SetImageInfo function in image.c for ImageMagick 6.2.3 and other versions, and GraphicsMagick, allows user-assisted attackers to cause a denial of service (crash) and possibly execute arbitrary code via a numeric format string specifier such as %d in the file name, a variant of CVE-2005-0397, and as demonstrated using the convert program."
+ },
+ {
+  "cve": "CVE-2006-0150",
+  "cwe": "CWE-134",
+  "text": "Multiple format string vulnerabilities in the auth_ldap_log_reason function in Apache auth_ldap 1.6.0 and earlier allows remote attackers to execute arbitrary code via various vectors, including the username."
+ },
+ {
+  "cve": "CVE-2006-0200",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in the error-reporting feature in the mysqli extension in PHP 5.1.0 and 5.1.1 might allow remote attackers to execute arbitrary code via format string specifiers in MySQL error messages."
+ },
+ {
+  "cve": "CVE-2006-0705",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in a logging function as used by various SFTP servers, including (1) AttachmateWRQ Reflection for Secure IT UNIX Server before 6.0.0.9, (2) Reflection for Secure IT Windows Server before 6.0 build 38, (3) F-Secure SSH Server for Windows before 5.3 build 35, (4) F-Secure SSH Server for UNIX 3.0 through 5.0.8, (5) SSH Tectia Server 4.3.6 and earlier and 4.4.0, and (6) SSH Shell Server 3.2.9 and earlier, allows remote authenticated users to execute arbitrary commands via unspecified vectors, involving crafted filenames and the stat command."
+ },
+ {
+  "cve": "CVE-2006-0771",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in PunkBuster 1.180 and earlier, as used by Soldier of Fortune II and possibly other games, allows remote attackers to cause a denial of service (server crash) and possibly execute arbitrary code via format string specifiers in invalid cvar values, which are not properly handled when the server kicks the player and records the reason."
+ },
+ {
+  "cve": "CVE-2006-0743",
+  "cwe": "CWE-134",
+  "text": "Format string vulnerability in LocalSyslogAppender in Apache log4net 1.2.9 might allow remote attackers to cause a denial of service (memory corruption and termination) via unknown vectors."
+ },
+ {
+  "cve": "CVE-2006-1615",
+  "cwe": "CWE-134",
+  "text": "Multiple format string vulnerabilities in the logging code in Clam AntiVirus (ClamAV) before 0.88.1 might allow remote attackers to execute arbitrary code.  NOTE: as of 20060410, it is unclear whether this is a vulnerability, as there is some evidence that the arguments are actually being sanitized properly."
+ },
+ {
+  "cve": "CVE-2006-1840",
+  "cwe": "CWE-134",
+  "text": "Multiple format string vulnerabilities in Empire Server before 4.3.1 allow attackers to cause a denial of service (crash) via the (1) load, (2) spy and (3) bomb functions."
+ },
+ {
+  "cve": "CVE-2002-0639",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in sshd in OpenSSH 2.9.9 through 3.3 allows remote attackers to execute arbitrary code during challenge response authentication (ChallengeResponseAuthentication) when OpenSSH is using SKEY or BSD_AUTH authentication."
+ },
+ {
+  "cve": "CVE-2002-0391",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in xdr_array function in RPC servers for operating systems that use libc, glibc, or other code based on SunRPC including dietlibc, allows remote attackers to execute arbitrary code by passing a large number of arguments to xdr_array through RPC services such as rpc.cmsd and dmispd."
+ },
+ {
+  "cve": "CVE-2004-0657",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the NTP daemon (NTPd) before 4.0 causes the NTP server to return the wrong date/time offset when a client requests a date/time that is more than 34 years away from the server's time."
+ },
+ {
+  "cve": "CVE-2004-0788",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the ICO image decoder for (1) gdk-pixbuf before 0.22 and (2) gtk2 before 2.2.4 allows remote attackers to cause a denial of service (application crash) via a crafted ICO file."
+ },
+ {
+  "cve": "CVE-2004-2013",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the SCTP_SOCKOPT_DEBUG_NAME SCTP socket option in socket.c in the Linux kernel 2.4.25 and earlier allows local users to execute arbitrary code via an optlen value of -1, which causes kmalloc to allocate 0 bytes of memory."
+ },
+ {
+  "cve": "CVE-2005-0102",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in camel-lock-helper in Evolution 2.0.2 and earlier allows local users or remote malicious POP3 servers to execute arbitrary code via a length value of -1, which leads to a zero byte memory allocation and a buffer overflow."
+ },
+ {
+  "cve": "CVE-2005-1141",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the readpgm function in pnm.c for GOCR 0.40, when using the netpbm library, allows remote attackers to execute arbitrary code via a PNM file with large width and height values, which leads to a heap-based buffer overflow."
+ },
+ {
+  "cve": "CVE-2005-1513",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the stralloc_readyplus function in qmail, when running on 64 bit platforms with a large amount of virtual memory, allows remote attackers to cause a denial of service and possibly execute arbitrary code via a large SMTP request."
+ },
+ {
+  "cve": "CVE-2005-2976",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in io-xpm.c in gdk-pixbuf 0.22.0 in GTK+ before 2.8.7 allows attackers to cause a denial of service (crash) or execute arbitrary code via an XPM file with large height, width, and colour values, a different vulnerability than CVE-2005-3186."
+ },
+ {
+  "cve": "CVE-2006-3198",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in Opera 8.54 and earlier allows remote attackers to execute arbitrary code via a JPEG image with large height and width values, which causes less memory to be allocated than intended."
+ },
+ {
+  "cve": "CVE-2006-5937",
+  "cwe": "CWE-190",
+  "text": "Multiple integer overflows in Grisoft AVG Anti-Virus before 7.1.407 allow remote attackers to execute arbitrary code via crafted (1) CAB or (2) RAR archives that trigger a heap-based buffer overflow.  NOTE: some of these details are obtained from third party information."
+ },
+ {
+  "cve": "CVE-2007-0221",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the IMAP (IMAP4) support in Microsoft Exchange Server 2000 SP3 allows remote attackers to cause a denial of service (service hang) via crafted literals in an IMAP command, aka the \"IMAP Literal Processing Vulnerability.\""
+ },
+ {
+  "cve": "CVE-2007-2949",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the seek_to_and_unpack_pixeldata function in the psd.c plugin in Gimp 2.2.15 allows remote attackers to execute arbitrary code via a crafted PSD file that contains a large (1) width or (2) height value."
+ },
+ {
+  "cve": "CVE-2006-4519",
+  "cwe": "CWE-190",
+  "text": "Multiple integer overflows in the image loader plug-ins in GIMP before 2.2.16 allow user-assisted remote attackers to execute arbitrary code via crafted length values in (1) DICOM, (2) PNM, (3) PSD, (4) PSP, (5) Sun RAS, (6) XBM, and (7) XWD files."
+ },
+ {
+  "cve": "CVE-2007-3387",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the StreamPredictor::StreamPredictor function in xpdf 3.02, as used in (1) poppler before 0.5.91, (2) gpdf before 2.8.2, (3) kpdf, (4) kdegraphics, (5) CUPS, (6) PDFedit, and other products, might allow remote attackers to execute arbitrary code via a crafted PDF file that triggers a stack-based buffer overflow in the StreamPredictor::getNextLine function."
+ },
+ {
+  "cve": "CVE-2007-2834",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in the TIFF parser in OpenOffice.org (OOo) before 2.3; and Sun StarOffice 6, 7, and 8 Office Suite (StarSuite); allows remote attackers to execute arbitrary code via a TIFF file with crafted values of unspecified length fields, which triggers allocation of an incorrect amount of memory, resulting in a heap-based buffer overflow."
+ },
+ {
+  "cve": "CVE-2007-4965",
+  "cwe": "CWE-190",
+  "text": "Multiple integer overflows in the imageop module in Python 2.5.1 and earlier allow context-dependent attackers to cause a denial of service (application crash) and possibly obtain sensitive information (memory contents) via crafted arguments to (1) the tovideo method, and unspecified other vectors related to (2) imageop.c, (3) rbgimgmodule.c, and other files, which trigger heap-based buffer overflows."
+ },
+ {
+  "cve": "CVE-2007-6353",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in exif.cpp in exiv2 library allows context-dependent attackers to execute arbitrary code via a crafted EXIF file that triggers a heap-based buffer overflow."
+ },
+ {
+  "cve": "CVE-2008-1374",
+  "cwe": "CWE-190",
+  "text": "Integer overflow in pdftops filter in CUPS in Red Hat Enterprise Linux 3 and 4, when running on 64-bit platforms, allows remote attackers to execute arbitrary code via a crafted PDF file.  NOTE: this issue is due to an incomplete fix for CVE-2004-0888."
+ },
+ {
+  "cve": "CVE-2008-1679",
+  "cwe": "CWE-190",
+  "text": "Multiple integer overflows in imageop.c in Python before 2.5.3 allow context-dependent attackers to cause a denial of service (crash) and possibly execute arbitrary code via crafted images that trigger heap-based buffer overflows.  NOTE: this issue is due to an incomplete fix for CVE-2007-4965."
+ },
+ {
+  "cve": "CVE-2004-0816",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the firewall logging rules for iptables in Linux before 2.6.8 allows remote attackers to cause a denial of service (application crash) via a malformed IP packet."
+ },
+ {
+  "cve": "CVE-2004-1002",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in pppd in cbcp.c for ppp 2.4.1 allows remote attackers to cause a denial of service (daemon crash) via a CBCP packet with an invalid length value that causes pppd to access an incorrect memory location."
+ },
+ {
+  "cve": "CVE-2005-0199",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the Lists_MakeMask() function in lists.c in ngIRCd before 0.8.2 allows remote attackers to cause a denial of service (application crash) and possibly execute arbitrary code via a long MODE line that causes an incorrect length calculation, which leads to a buffer overflow."
+ },
+ {
+  "cve": "CVE-2005-1891",
+  "cwe": "CWE-191",
+  "text": "The GIF parser in ateimg32.dll in AOL Instant Messenger (AIM) 5.9.3797 and earlier allows remote attackers to cause a denial of service (crash) via a malformed buddy icon that causes an integer underflow in a loop counter variable."
+ },
+ {
+  "cve": "CVE-2007-0063",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the DHCP server in EMC VMware Workstation before 5.5.5 Build 56455 and 6.x before 6.0.1 Build 55017, Player before 1.0.5 Build 56455 and Player 2 before 2.0.1 Build 55017, ACE before 1.0.3 Build 54075 and ACE 2 before 2.0.1 Build 55017, and Server before 1.0.4 Build 56528 allows remote attackers to execute arbitrary code via a malformed DHCP packet that triggers a stack-based buffer overflow."
+ },
+ {
+  "cve": "CVE-2009-3301",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in filter/ww8/ww8par2.cxx in OpenOffice.org (OOo) before 3.2 allows remote attackers to cause a denial of service (application crash) or possibly execute arbitrary code via a crafted sprmTDefTable table property modifier in a Word document."
+ },
+ {
+  "cve": "CVE-2010-2497",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in glyph handling in FreeType before 2.4.0 allows remote attackers to cause a denial of service (application crash) or possibly execute arbitrary code via a crafted font file."
+ },
+ {
+  "cve": "CVE-2010-4164",
+  "cwe": "CWE-191",
+  "text": "Multiple integer underflows in the x25_parse_facilities function in net/x25/x25_facilities.c in the Linux kernel before 2.6.36.2 allow remote attackers to cause a denial of service (system crash) via malformed X.25 (1) X25_FAC_CLASS_A, (2) X25_FAC_CLASS_B, (3) X25_FAC_CLASS_C, or (4) X25_FAC_CLASS_D facility data, a different vulnerability than CVE-2010-3873."
+ },
+ {
+  "cve": "CVE-2010-4529",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the irda_getsockopt function in net/irda/af_irda.c in the Linux kernel before 2.6.37 on platforms other than x86 allows local users to obtain potentially sensitive information from kernel heap memory via an IRLMP_ENUMDEVICES getsockopt call."
+ },
+ {
+  "cve": "CVE-2011-1770",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the dccp_parse_options function (net/dccp/options.c) in the Linux kernel before 2.6.33.14 allows remote attackers to cause a denial of service via a Datagram Congestion Control Protocol (DCCP) packet with an invalid feature options length, which triggers a buffer over-read."
+ },
+ {
+  "cve": "CVE-2011-2497",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the l2cap_config_req function in net/bluetooth/l2cap_core.c in the Linux kernel before 3.0 allows remote attackers to cause a denial of service (heap memory corruption) or possibly have unspecified other impact via a small command-size value within the command header of a Logical Link Control and Adaptation Protocol (L2CAP) configuration request, leading to a buffer overflow."
+ },
+ {
+  "cve": "CVE-2011-4031",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the asfrtp_parse_packet function in libavformat/rtpdec_asf.c in FFmpeg before 0.8.3 allows remote attackers to execute arbitrary code via a crafted ASF packet."
+ },
+ {
+  "cve": "CVE-2013-6424",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the xTrapezoidValid macro in render/picture.h in X.Org allows context-dependent attackers to cause a denial of service (crash) via a negative bottom value."
+ },
+ {
+  "cve": "CVE-2013-6425",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the pixman_trapezoid_valid macro in pixman.h in Pixman before 0.32.0, as used in X.Org server and cairo, allows context-dependent attackers to cause a denial of service (crash) via a negative bottom value."
+ },
+ {
+  "cve": "CVE-2014-0497",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in Adobe Flash Player before 11.7.700.261 and 11.8.x through 12.0.x before 12.0.0.44 on Windows and Mac OS X, and before 11.2.202.336 on Linux, allows remote attackers to execute arbitrary code via unspecified vectors."
+ },
+ {
+  "cve": "CVE-2014-8768",
+  "cwe": "CWE-191",
+  "text": "Multiple Integer underflows in the geonet_print function in tcpdump 4.5.0 through 4.6.2, when in verbose mode, allow remote attackers to cause a denial of service (segmentation fault and crash) via a crafted length value in a Geonet frame."
+ },
+ {
+  "cve": "CVE-2014-9087",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the ksba_oid_to_str function in Libksba before 1.3.2, as used in GnuPG, allows remote attackers to cause a denial of service (crash) via a crafted OID in a (1) S/MIME message or (2) ECC based OpenPGP data, which triggers a buffer overflow."
+ },
+ {
+  "cve": "CVE-2015-0537",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in the base64-decoding implementation in EMC RSA BSAFE Micro Edition Suite (MES) 4.0.x before 4.0.8 and 4.1.x before 4.1.3, RSA BSAFE Crypto-C Micro Edition (Crypto-C ME) before 4.0.4 and 4.1, and RSA BSAFE SSL-C 2.8.9 and earlier allows remote attackers to cause a denial of service (memory corruption or segmentation fault) or possibly have unspecified other impact via crafted base64 data, a similar issue to CVE-2015-0292."
+ },
+ {
+  "cve": "CVE-2015-5212",
+  "cwe": "CWE-191",
+  "text": "Integer underflow in LibreOffice before 4.4.5 and Apache OpenOffice before 4.1.2, when the configuration setting \"Load printer settings with the document\" is enabled, allows remote attackers to cause a denial of service (memory corruption and application crash) or possibly execute arbitrary code via crafted PrinterSetup data in an ODF document."
+ },
+ {
+  "cve": "CVE-2016-2316",
+  "cwe": "CWE-191",
+  "text": "chan_sip in Asterisk Open Source 1.8.x, 11.x before 11.21.1, 12.x, and 13.x before 13.7.1 and Certified Asterisk 1.8.28, 11.6 before 11.6-cert12, and 13.1 before 13.1-cert3, when the timert1 sip.conf configuration is set to a value greater than 1245, allows remote attackers to cause a denial of service (file descriptor consumption) via vectors related to large retransmit timeout values."
+ },
+ {
+  "cve": "CVE-1999-1568",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in NcFTPd FTP server before 2.4.1 allows a remote attacker to cause a denial of service (crash) via a long PORT command."
+ },
+ {
+  "cve": "CVE-2001-1391",
+  "cwe": "CWE-193",
+  "text": "Off-by-one vulnerability in CPIA driver of Linux kernel before 2.2.19 allows users to modify kernel memory."
+ },
+ {
+  "cve": "CVE-2001-0609",
+  "cwe": "CWE-193",
+  "text": "Format string vulnerability in Infodrom cfingerd 1.4.3 and earlier allows a remote attacker to gain additional privileges via a malformed ident reply that is passed to the syslog function."
+ },
+ {
+  "cve": "CVE-2001-1496",
+  "cwe": "CWE-193",
+  "text": "Off-by-one buffer overflow in Basic Authentication in Acme Labs thttpd 1.95 through 2.20 allows remote attackers to cause a denial of service and possibly execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2002-0083",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in the channel code of OpenSSH 2.0 through 3.0.2 allows local users or remote malicious servers to gain privileges."
+ },
+ {
+  "cve": "CVE-2002-0653",
+  "cwe": "CWE-193",
+  "text": "Off-by-one buffer overflow in the ssl_compat_directive function, as called by the rewrite_command hook for mod_ssl Apache module 2.8.9 and earlier, allows local users to execute arbitrary code as the Apache server user via .htaccess files with long entries."
+ },
+ {
+  "cve": "CVE-2002-0844",
+  "cwe": "CWE-193",
+  "text": "Off-by-one overflow in the CVS PreservePermissions of rcs.c for CVSD before 1.11.2 allows local users to execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2002-1721",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in alterMIME 0.1.10 and 0.1.11 allows remote attackers to cause a denial of service (crash) via an x-header that causes snprintf overwrite the FFGET_FILE variable with a (null) byte."
+ },
+ {
+  "cve": "CVE-2002-1745",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in the CodeBrws.asp sample script in Microsoft IIS 5.0 allows remote attackers to view the source code for files with extensions containing with one additional character after .html, .htm, .asp, or .inc, such as .aspx files."
+ },
+ {
+  "cve": "CVE-2002-1816",
+  "cwe": "CWE-193",
+  "text": "Off-by-one buffer overflow in the sock_gets function in sockhelp.c for ATPhttpd 0.4b and earlier allows remote attackers to execute arbitrary code via a long HTTP GET request."
+ },
+ {
+  "cve": "CVE-2003-0356",
+  "cwe": "CWE-193",
+  "text": "Multiple off-by-one vulnerabilities in Ethereal 0.9.11 and earlier allow remote attackers to cause a denial of service and possibly execute arbitrary code via the (1) AIM, (2) GIOP Gryphon, (3) OSPF, (4) PPTP, (5) Quake, (6) Quake2, (7) Quake3, (8) Rsync, (9) SMB, (10) SMPP, and (11) TSP dissectors, which do not properly use the tvb_get_nstringz and tvb_get_nstringz0 functions."
+ },
+ {
+  "cve": "CVE-2003-0252",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in the xlog function of mountd in the Linux NFS utils package (nfs-utils) before 1.0.4 allows remote attackers to cause a denial of service and possibly execute arbitrary code via certain RPC requests to mountd that do not contain newlines."
+ },
+ {
+  "cve": "CVE-2003-0466",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in the fb_realpath() function, as derived from the realpath function in BSD, may allow attackers to execute arbitrary code, as demonstrated in wu-ftpd 2.5.0 through 2.6.2 via commands that cause pathnames of length MAXPATHLEN+1 to trigger a buffer overflow, including (1) STOR, (2) RETR, (3) APPE, (4) DELE, (5) MKD, (6) RMD, (7) STOU, or (8) RNTO."
+ },
+ {
+  "cve": "CVE-2003-0625",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in certain versions of xfstt allows remote attackers to read potentially sensitive memory via a malformed client request in the connection handshake, which leaks the memory in the server's response."
+ },
+ {
+  "cve": "CVE-2004-0005",
+  "cwe": "CWE-193",
+  "text": "Multiple buffer overflows in Gaim 0.75 allow remote attackers to cause a denial of service and possibly execute arbitrary code via (1) octal encoding in yahoo_decode that causes a null byte to be written beyond the buffer, (2) octal encoding in yahoo_decode that causes a pointer to reference memory beyond the terminating null byte, (3) a quoted printable string to the gaim_quotedp_decode MIME decoder that causes a null byte to be written beyond the buffer, and (4) quoted printable encoding in gaim_quotedp_decode that causes a pointer to reference memory beyond the terminating null byte."
+ },
+ {
+  "cve": "CVE-2004-0342",
+  "cwe": "CWE-193",
+  "text": "WFTPD Pro Server 3.21 Release 1, with the XeroxDocutech option enabled, allows local users to cause a denial of service (crash) via a (1) MKD or (2) XMKD command that causes an absolute path of 260 characters to be used, which overwrites a cookie with a null character, possibly due to an off-by-one error."
+ },
+ {
+  "cve": "CVE-2004-0346",
+  "cwe": "CWE-193",
+  "text": "Off-by-one buffer overflow in _xlate_ascii_write() in ProFTPD 1.2.7 through 1.2.9rc2p allows local users to gain privileges via a 1024 byte RETR command."
+ },
+ {
+  "cve": "CVE-2005-1268",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in the mod_ssl Certificate Revocation List (CRL) verification callback in Apache, when configured to use a CRL, allows remote attackers to cause a denial of service (child process crash) via a CRL that causes a buffer overflow of one null byte."
+ },
+ {
+  "cve": "CVE-2007-2052",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in the PyLocale_strxfrm function in Modules/_localemodule.c for Python 2.4 and 2.5 causes an incorrect buffer size to be used for the strxfrm function, which allows context-dependent attackers to read portions of memory via unknown manipulations that trigger a buffer over-read due to missing null termination."
+ },
+ {
+  "cve": "CVE-2008-3535",
+  "cwe": "CWE-193",
+  "text": "Off-by-one error in the iov_iter_advance function in mm/filemap.c in the Linux kernel before 2.6.27-rc2 allows local users to cause a denial of service (system crash) via a certain sequence of file I/O operations with readv and writev, as demonstrated by testcases/kernel/fs/ftest/ftest03 from the Linux Test Project."
+ },
+ {
+  "cve": "CVE-2004-0804",
+  "cwe": "CWE-369",
+  "text": "Vulnerability in tif_dirread.c for libtiff allows remote attackers to cause a denial of service (application crash) via a TIFF image that causes a divide-by-zero error when the number of row bytes is zero, a different vulnerability than CVE-2005-2452."
+ },
+ {
+  "cve": "CVE-2006-5939",
+  "cwe": "CWE-369",
+  "text": "Grisoft AVG Anti-Virus before 7.1.407 allows remote attackers to cause a denial of service (crash) via a crafted DOC file that triggers a divide-by-zero error.  NOTE: some of these details are obtained from third party information."
+ },
+ {
+  "cve": "CVE-2007-2723",
+  "cwe": "CWE-369",
+  "text": "Media Player Classic 6.4.9.0 allows user-assisted remote attackers to cause a denial of service (web browser crash) via an \"empty\" .MPA file, which triggers a divide-by-zero error."
+ },
+ {
+  "cve": "CVE-2007-2237",
+  "cwe": "CWE-369",
+  "text": "Microsoft Windows Graphics Device Interface (GDI+, GdiPlus.dll) allows context-dependent attackers to cause a denial of service (crash) via an ICO file with an InfoHeader containing a Height of zero, which triggers a divide-by-zero error."
+ },
+ {
+  "cve": "CVE-2007-3268",
+  "cwe": "CWE-369",
+  "text": "The TFTP implementation in IBM Tivoli Provisioning Manager for OS Deployment 5.1 before Fix Pack 3 allows remote attackers to cause a denial of service (rembo.exe crash and multiple service outage) via a read (RRQ) request with an invalid blksize (blocksize), which triggers a divide-by-zero error."
+ },
+ {
+  "cve": "CVE-2009-1887",
+  "cwe": "CWE-369",
+  "text": "agent/snmp_agent.c in snmpd in net-snmp 5.0.9 in Red Hat Enterprise Linux (RHEL) 3 allows remote attackers to cause a denial of service (daemon crash) via a crafted SNMP GETBULK request that triggers a divide-by-zero error.  NOTE: this vulnerability exists because of an incorrect fix for CVE-2008-4309."
+ },
+ {
+  "cve": "CVE-2010-4165",
+  "cwe": "CWE-369",
+  "text": "The do_tcp_setsockopt function in net/ipv4/tcp.c in the Linux kernel before 2.6.37-rc2 does not properly restrict TCP_MAXSEG (aka MSS) values, which allows local users to cause a denial of service (OOPS) via a setsockopt call that specifies a small value, leading to a divide-by-zero error or incorrect use of a signed integer."
+ },
+ {
+  "cve": "CVE-2011-1012",
+  "cwe": "CWE-369",
+  "text": "The ldm_parse_vmdb function in fs/partitions/ldm.c in the Linux kernel before 2.6.38-rc6-git6 does not validate the VBLK size value in the VMDB structure in an LDM partition table, which allows local users to cause a denial of service (divide-by-zero error and OOPS) via a crafted partition table."
+ },
+ {
+  "cve": "CVE-2012-0207",
+  "cwe": "CWE-369",
+  "text": "The igmp_heard_query function in net/ipv4/igmp.c in the Linux kernel before 3.2.1 allows remote attackers to cause a denial of service (divide-by-zero error and panic) via IGMP packets."
+ },
+ {
+  "cve": "CVE-2015-6855",
+  "cwe": "CWE-369",
+  "text": "hw/ide/core.c in QEMU does not properly restrict the commands accepted by an ATAPI device, which allows guest users to cause a denial of service or possibly have unspecified other impact via certain IDE commands, as demonstrated by a WIN_READ_NATIVE_MAX command to an empty drive, which triggers a divide-by-zero error and instance crash."
+ },
+ {
+  "cve": "CVE-2014-9756",
+  "cwe": "CWE-369",
+  "text": "The psf_fwrite function in file_io.c in libsndfile allows attackers to cause a denial of service (divide-by-zero error and application crash) via unspecified vectors related to the headindex variable."
+ },
+ {
+  "cve": "CVE-2015-7513",
+  "cwe": "CWE-369",
+  "text": "arch/x86/kvm/x86.c in the Linux kernel before 4.4 does not reset the PIT counter values during state restoration, which allows guest OS users to cause a denial of service (divide-by-zero error and host OS crash) via a zero value, related to the kvm_vm_ioctl_set_pit and kvm_vm_ioctl_set_pit2 functions."
+ },
+ {
+  "cve": "CVE-2016-6505",
+  "cwe": "CWE-369",
+  "text": "epan/dissectors/packet-packetbb.c in the PacketBB dissector in Wireshark 1.12.x before 1.12.13 and 2.x before 2.0.5 allows remote attackers to cause a denial of service (divide-by-zero error and application crash) via a crafted packet."
+ },
+ {
+  "cve": "CVE-2016-3622",
+  "cwe": "CWE-369",
+  "text": "The fpAcc function in tif_predict.c in the tiff2rgba tool in LibTIFF 4.0.6 and earlier allows remote attackers to cause a denial of service (divide-by-zero error) via a crafted TIFF image."
+ },
+ {
+  "cve": "CVE-2016-3623",
+  "cwe": "CWE-369",
+  "text": "The rgb2ycbcr tool in LibTIFF 4.0.6 and earlier allows remote attackers to cause a denial of service (divide-by-zero) by setting the (1) v or (2) h parameter to 0."
+ },
+ {
+  "cve": "CVE-2016-9112",
+  "cwe": "CWE-369",
+  "text": "Floating Point Exception (aka FPE or divide by zero) in opj_pi_next_cprl function in openjp2/pi.c:523 in OpenJPEG 2.1.2."
+ },
+ {
+  "cve": "CVE-2016-8667",
+  "cwe": "CWE-369",
+  "text": "The rc4030_write function in hw/dma/rc4030.c in QEMU (aka Quick Emulator) allows local guest OS administrators to cause a denial of service (divide-by-zero error and QEMU process crash) via a large interval timer reload value."
+ },
+ {
+  "cve": "CVE-2016-8669",
+  "cwe": "CWE-369",
+  "text": "The serial_update_parameters function in hw/char/serial.c in QEMU (aka Quick Emulator) allows local guest OS administrators to cause a denial of service (divide-by-zero error and QEMU process crash) via vectors involving a value of divider greater than baud base."
+ },
+ {
+  "cve": "CVE-2015-3418",
+  "cwe": "CWE-369",
+  "text": "The ProcPutImage function in dix/dispatch.c in X.Org Server (aka xserver and xorg-server) before 1.16.4 allows attackers to cause a denial of service (divide-by-zero and crash) via a zero-height PutImage request."
+ },
+ {
+  "cve": "CVE-2016-9921",
+  "cwe": "CWE-369",
+  "text": "Quick emulator (Qemu) built with the Cirrus CLGD 54xx VGA Emulator support is vulnerable to a divide by zero issue. It could occur while copying VGA data when cirrus graphics mode was set to be VGA. A privileged user inside guest could use this flaw to crash the Qemu process instance on the host, resulting in DoS."
+ },
+ {
+  "cve": "CVE-2002-0059",
+  "cwe": "CWE-415",
+  "text": "The decompression algorithm in zlib 1.1.3 and earlier, as used in many different utilities and packages, causes inflateEnd to release certain memory more than once (a \"double free\"), which may allow local and remote attackers to execute arbitrary code via a block of malformed compression data."
+ },
+ {
+  "cve": "CVE-2003-0015",
+  "cwe": "CWE-415",
+  "text": "Double-free vulnerability in CVS 1.11.4 and earlier allows remote attackers to cause a denial of service and possibly execute arbitrary code via a malformed Directory request, as demonstrated by bypassing write checks to execute Update-prog and Checkin-prog commands."
+ },
+ {
+  "cve": "CVE-2003-0545",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in OpenSSL 0.9.7 allows remote attackers to cause a denial of service (crash) and possibly execute arbitrary code via an SSL client certificate with a certain invalid ASN.1 encoding."
+ },
+ {
+  "cve": "CVE-2003-1048",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in mshtml.dll for certain versions of Internet Explorer 6.x allows remote attackers to cause a denial of service (application crash) via a malformed GIF image."
+ },
+ {
+  "cve": "CVE-2004-0642",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerabilities in the error handling code for ASN.1 decoders in the (1) Key Distribution Center (KDC) library and (2) client library for MIT Kerberos 5 (krb5) 1.3.4 and earlier may allow remote attackers to execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2004-0643",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in the krb5_rd_cred function for MIT Kerberos 5 (krb5) 1.3.1 and earlier may allow local users to execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2004-0772",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerabilities in error handling code in krb524d for MIT Kerberos 5 (krb5) 1.2.8 and earlier may allow remote attackers to execute arbitrary code."
+ },
+ {
+  "cve": "CVE-2005-0891",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in gtk 2 (gtk2) before 2.2.4 allows remote attackers to cause a denial of service (crash) via a crafted BMP image."
+ },
+ {
+  "cve": "CVE-2005-1689",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in the krb5_recvauth function in MIT Kerberos 5 (krb5) 1.4.1 and earlier allows remote attackers to execute arbitrary code via certain error conditions."
+ },
+ {
+  "cve": "CVE-2006-5051",
+  "cwe": "CWE-415",
+  "text": "Signal handler race condition in OpenSSH before 4.4 allows remote attackers to cause a denial of service (crash), and possibly execute arbitrary code if GSSAPI authentication is enabled, via unspecified vectors that lead to a double-free."
+ },
+ {
+  "cve": "CVE-2007-1216",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in the GSS-API library (lib/gssapi/krb5/k5unseal.c), as used by the Kerberos administration daemon (kadmind) in MIT krb5 before 1.6.1, when used with the authentication method provided by the RPCSEC_GSS RPC library, allows remote authenticated users to execute arbitrary code and modify the Kerberos key database via a message with an \"an invalid direction encoding\"."
+ },
+ {
+  "cve": "CVE-2008-2944",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in the utrace support in the Linux kernel, probably 2.6.18, in Red Hat Enterprise Linux (RHEL) 5 and Fedora Core 6 (FC6) allows local users to cause a denial of service (oops), as demonstrated by a crash when running the GNU GDB testsuite, a different vulnerability than CVE-2008-2365."
+ },
+ {
+  "cve": "CVE-2010-3080",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in the snd_seq_oss_open function in sound/core/seq/oss/seq_oss_init.c in the Linux kernel before 2.6.36-rc4 might allow local users to cause a denial of service or possibly have unspecified other impact via an unsuccessful attempt to open the /dev/sequencer device."
+ },
+ {
+  "cve": "CVE-2010-4494",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in libxml2 2.7.8 and other versions, as used in Google Chrome before 8.0.552.215 and other products, allows remote attackers to cause a denial of service or possibly have unspecified other impact via vectors related to XPath handling."
+ },
+ {
+  "cve": "CVE-2011-2821",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in libxml2, as used in Google Chrome before 13.0.782.215, allows remote attackers to cause a denial of service or possibly have unspecified other impact via a crafted XPath expression."
+ },
+ {
+  "cve": "CVE-2011-2834",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in libxml2, as used in Google Chrome before 14.0.835.163, allows remote attackers to cause a denial of service or possibly have unspecified other impact via vectors related to XPath handling."
+ },
+ {
+  "cve": "CVE-2011-3892",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in the Theora decoder in Google Chrome before 15.0.874.120 allows remote attackers to cause a denial of service or possibly have unspecified other impact via a crafted stream."
+ },
+ {
+  "cve": "CVE-2014-1252",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in Apple Pages 2.x before 2.1 and 5.x before 5.1 allows remote attackers to execute arbitrary code or cause a denial of service (application crash) via a crafted Microsoft Word file."
+ },
+ {
+  "cve": "CVE-2014-0502",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in Adobe Flash Player before 11.7.700.269 and 11.8.x through 12.0.x before 12.0.0.70 on Windows and Mac OS X and before 11.2.202.341 on Linux, Adobe AIR before 4.0.0.1628 on Android, Adobe AIR SDK before 4.0.0.1628, and Adobe AIR SDK & Compiler before 4.0.0.1628 allows remote attackers to execute arbitrary code via unspecified vectors, as exploited in the wild in February 2014."
+ },
+ {
+  "cve": "CVE-2014-0301",
+  "cwe": "CWE-415",
+  "text": "Double free vulnerability in qedit.dll in DirectShow in Microsoft Windows XP SP2 and SP3, Windows Server 2003 SP2, Windows Vista SP2, Windows Server 2008 SP2 and R2 SP1, Windows 7 SP1, Windows 8, Windows 8.1, and Windows Server 2012 Gold and R2 allows remote attackers to execute arbitrary code via a crafted JPEG image, aka \"DirectShow Memory Corruption Vulnerability.\""
+ },
+ {
+  "cve": "CVE-2006-4434",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in Sendmail before 8.13.8 allows remote attackers to cause a denial of service (crash) via a long \"header line\", which causes a previously freed variable to be referenced. NOTE: the original developer has disputed the severity of this issue, saying \"The only denial of service that is possible here is to fill up the disk with core dumps if the OS actually generates different core dumps (which is unlikely)... the bug is in the shutdown code (finis()) which leads directly to exit(3), i.e., the process would terminate anyway, no mail delivery or receiption is affected.\""
+ },
+ {
+  "cve": "CVE-2006-4997",
+  "cwe": "CWE-416",
+  "text": "The clip_mkip function in net/atm/clip.c of the ATM subsystem in Linux kernel allows remote attackers to cause a denial of service (panic) via unknown vectors that cause the ATM subsystem to access the memory of socket buffers after they are freed (freed pointer dereference)."
+ },
+ {
+  "cve": "CVE-2007-3929",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the BitTorrent support in Opera before 9.22 allows user-assisted remote attackers to execute arbitrary code via a crafted header in a torrent file, which leaves a dangling pointer to an invalid object."
+ },
+ {
+  "cve": "CVE-2008-0077",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in Microsoft Internet Explorer 6 SP1, 6 SP2, and and 7 allows remote attackers to execute arbitrary code by assigning malformed values to certain properties, as demonstrated using the by property of an animateMotion SVG element, aka \"Property Memory Corruption Vulnerability.\""
+ },
+ {
+  "cve": "CVE-2008-3077",
+  "cwe": "CWE-416",
+  "text": "arch/x86/kernel/ptrace.c in the Linux kernel before 2.6.25.10 on the x86_64 platform leaks task_struct references into the sys32_ptrace function, which allows local users to cause a denial of service (system crash) or have unspecified other impact via unknown vectors, possibly a use-after-free vulnerability."
+ },
+ {
+  "cve": "CVE-2008-5038",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the NetWare Core Protocol (NCP) feature in Novell eDirectory 8.7.3 SP10 before 8.7.3 SP10 FTF1 and 8.8 SP2 for Windows allows remote attackers to cause a denial of service and possibly execute arbitrary code via a sequence of \"Get NCP Extension Information By Name\" requests that cause one thread to operate on memory after it has been freed in another thread, which triggers memory corruption, aka Novell Bug 373852."
+ },
+ {
+  "cve": "CVE-2009-0749",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the GIFReadNextExtension function in lib/pngxtern/gif/gifread.c in OptiPNG 0.6.2 and earlier allows context-dependent attackers to cause a denial of service (application crash) via a crafted GIF image that causes the realloc function to return a new pointer, which triggers memory corruption when the old pointer is accessed."
+ },
+ {
+  "cve": "CVE-2009-2416",
+  "cwe": "CWE-416",
+  "text": "Multiple use-after-free vulnerabilities in libxml2 2.5.10, 2.6.16, 2.6.26, 2.6.27, and 2.6.32, and libxml 1.8.17, allow context-dependent attackers to cause a denial of service (application crash) via crafted (1) Notation or (2) Enumeration attribute types in an XML file, as demonstrated by the Codenomicon XML fuzzing framework."
+ },
+ {
+  "cve": "CVE-2009-3658",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the Sb.SuperBuddy.1 ActiveX control (sb.dll) in America Online (AOL) 9.5.0.1 allows remote attackers to trigger memory corruption or possibly execute arbitrary code via a malformed argument to the SetSuperBuddy method."
+ },
+ {
+  "cve": "CVE-2009-3616",
+  "cwe": "CWE-416",
+  "text": "Multiple use-after-free vulnerabilities in vnc.c in the VNC server in QEMU 0.10.6 and earlier might allow guest OS users to execute arbitrary code on the host OS by establishing a connection from a VNC client and then (1) disconnecting during data transfer, (2) sending a message using incorrect integer data types, or (3) using the Fuzzy Screen Mode protocol, related to double free vulnerabilities."
+ },
+ {
+  "cve": "CVE-2009-3553",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the abstract file-descriptor handling interface in the cupsdDoSelect function in scheduler/select.c in the scheduler in cupsd in CUPS 1.3.7 and 1.3.10 allows remote attackers to cause a denial of service (daemon crash or hang) via a client disconnection during listing of a large number of print jobs, related to improperly maintaining a reference count.  NOTE: some of these details are obtained from third party information."
+ },
+ {
+  "cve": "CVE-2009-4324",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the Doc.media.newPlayer method in Multimedia.api in Adobe Reader and Acrobat 9.x before 9.3, and 8.x before 8.2 on Windows and Mac OS X, allows remote attackers to execute arbitrary code via a crafted PDF file using ZLib compressed streams, as exploited in the wild in December 2009."
+ },
+ {
+  "cve": "CVE-2010-0249",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in Microsoft Internet Explorer 6, 6 SP1, 7, and 8 on Windows 2000 SP4; Windows XP SP2 and SP3; Windows Server 2003 SP2; Windows Vista Gold, SP1, and SP2; Windows Server 2008 Gold, SP2, and R2; and Windows 7 allows remote attackers to execute arbitrary code by accessing a pointer associated with a deleted object, related to incorrectly initialized memory and improper handling of objects in memory, as exploited in the wild in December 2009 and January 2010 during Operation Aurora, aka \"HTML Object Memory Corruption Vulnerability.\""
+ },
+ {
+  "cve": "CVE-2010-0378",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in Adobe Flash Player 6.0.79, as distributed in Microsoft Windows XP SP2 and SP3, allows remote attackers to execute arbitrary code by unloading a Flash object that is currently being accessed by a script, leading to memory corruption, aka a \"Movie Unloading Vulnerability.\""
+ },
+ {
+  "cve": "CVE-2010-0302",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the abstract file-descriptor handling interface in the cupsdDoSelect function in scheduler/select.c in the scheduler in cupsd in CUPS before 1.4.4, when kqueue or epoll is used, allows remote attackers to cause a denial of service (daemon crash or hang) via a client disconnection during listing of a large number of print jobs, related to improperly maintaining a reference count. NOTE: some of these details are obtained from third party information. NOTE: this vulnerability exists because of an incomplete fix for CVE-2009-3553."
+ },
+ {
+  "cve": "CVE-2010-0050",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in WebKit in Apple Safari before 4.0.5 allows remote attackers to execute arbitrary code or cause a denial of service (application crash) via an HTML document with improperly nested tags."
+ },
+ {
+  "cve": "CVE-2010-0629",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in kadmin/server/server_stubs.c in kadmind in MIT Kerberos 5 (aka krb5) 1.5 through 1.6.3 allows remote authenticated users to cause a denial of service (daemon crash) via a request from a kadmin client that sends an invalid API version number."
+ },
+ {
+  "cve": "CVE-2010-2300",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the Element::normalizeAttributes function in dom/Element.cpp in WebCore in WebKit in Google Chrome before 5.0.375.70 allows remote attackers to execute arbitrary code or cause a denial of service (memory corruption) via vectors related to handlers for DOM mutation events, aka rdar problem 7948784.  NOTE: this might overlap CVE-2010-1759."
+ },
+ {
+  "cve": "CVE-2010-2302",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in WebCore in WebKit in Google Chrome before 5.0.375.70 allows remote attackers to cause a denial of service (memory corruption) or possibly execute arbitrary code via vectors involving remote fonts in conjunction with shadow DOM trees, aka rdar problem 8007953.  NOTE: this might overlap CVE-2010-1771."
+ },
+ {
+  "cve": "CVE-2010-1208",
+  "cwe": "CWE-416",
+  "text": "Use-after-free vulnerability in the attribute-cloning functionality in the DOM implementation in Mozilla Firefox 3.5.x before 3.5.11 and 3.6.x before 3.6.7, and SeaMonkey before 2.0.6, allows remote attackers to execute arbitrary code via vectors related to deletion of an event attribute node with a nonzero reference count."
+ },
+ {
+  "cve": "CVE-2026-12469",
+  "cwe": "CWE-457",
+  "text": "Uninitialized Use in GPU in Google Chrome on Android prior to 149.0.7827.155 allowed a remote attacker to leak cross-origin data via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-13833",
+  "cwe": "CWE-457",
+  "text": "Uninitialized Use in ANGLE in Google Chrome on Mac prior to 150.0.7871.47 allowed a remote attacker to leak cross-origin data via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-15766",
+  "cwe": "CWE-457",
+  "text": "Uninitialized Use in Skia in Google Chrome prior to 150.0.7871.125 allowed a remote attacker to obtain potentially sensitive information from process memory via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-15770",
+  "cwe": "CWE-457",
+  "text": "Uninitialized Use in V8 in Google Chrome prior to 150.0.7871.125 allowed a remote attacker to obtain potentially sensitive information from process memory via a crafted HTML page. (Chromium security severity: High)"
+ },
+ {
+  "cve": "CVE-2026-17858",
+  "cwe": "CWE-457",
+  "text": "Uninitialized Use in WebNN in Google Chrome on Windows prior to 151.0.7922.72 allowed a remote attacker to leak cross-origin data via a crafted HTML page. (Chromium security severity: Medium)"
+ },
+ {
+  "cve": "CVE-2026-91963",
+  "cwe": "CWE-457",
+  "text": "FreeRDP versions before 3.31.0 contain an uninitialized heap memory disclosure vulnerability in the urbdrc USB redirection channel. A malicious RDP server can induce failing USB transfers to read uninitialized heap memory from the client, defeating ASLR and enabling remote code execution when chained with memory corruption vulnerabilities."
+ },
+ {
+  "cve": "CVE-2026-19492",
+  "cwe": "CWE-457",
+  "text": "IBM PowerVM Hypervisor FW1120.00 through FW1120.01, FW1110.00 through FW1110.31, and FW1060.00 through FW1060.81 is affected by a vulnerability in a hypervisor call interface. An attacker with root access to a guest partition can read a limited amount of hypervisor memory, potentially exposing sensitive data belonging to the hypervisor or other guest partitions hosted on the same system, resulting in a confidentiality impact. The attacker has no control over which memory contents are returned. This vulnerability is of particular concern in multi-tenant environments where guests may run arbitrary OS images."
+ },
+ {
+  "cve": "CVE-2026-113028",
+  "cwe": "CWE-457",
+  "text": "Use of uninitialized variable in Media in Google Chrome prior to 156.0.8078.47 allowed a remote attacker to potentially read memory inside the sandbox via a crafted media file. (Chromium security severity: Medium)"
+ },
+ {
+  "cve": "CVE-2026-113030",
+  "cwe": "CWE-457",
+  "text": "Use of uninitialized variable in V8 in Google Chrome prior to 156.0.8078.47 allowed a remote attacker to execute arbitrary code inside the sandbox via a crafted HTML page. (Chromium security severity: Medium)"
+ },
+ {
+  "cve": "CVE-2026-113100",
+  "cwe": "CWE-457",
+  "text": "Use of uninitialized variable in Audio in Google Chrome prior to 156.0.8078.47 allowed a remote attacker to potentially read memory inside the sandbox via a crafted media file. (Chromium security severity: Medium)"
+ },
+ {
+  "cve": "CVE-2026-113120",
+  "cwe": "CWE-457",
+  "text": "Use of uninitialized variable in Media in Google Chrome prior to 156.0.8078.47 allowed a remote attacker to potentially read memory inside the sandbox via a crafted HTML page. (Chromium security severity: Medium)"
+ },
+ {
+  "cve": "CVE-2026-46676",
+  "cwe": "CWE-457",
+  "text": "BACnet Stack is a BACnet open source protocol stack C library for embedded systems. From versions 1.4.0 to before 1.4.4, and 1.5.0 to before 1.5.1, an uninitialized value use vulnerability in bacnet-stack's AtomicReadFile record-access ACK encoder allows unauthenticated remote attackers to corrupt the encoded OCTET STRING length and payload boundary in network responses by sending a crafted AtomicReadFile request that reaches a successful record-access path. This issue has been patched in versions 1.4.4 and 1.5.1."
+ },
+ {
+  "cve": "CVE-2001-1559",
+  "cwe": "CWE-476",
+  "text": "The uipc system calls (uipc_syscalls.c) in OpenBSD 2.9 and 3.0 provide user mode return instead of versus rval kernel mode values to the fdrelease function, which allows local users to cause a denial of service and trigger a null dereference."
+ },
+ {
+  "cve": "CVE-2002-0401",
+  "cwe": "CWE-476",
+  "text": "SMB dissector in Ethereal 0.9.3 and earlier allows remote attackers to cause a denial of service (crash) or execute arbitrary code via malformed packets that cause Ethereal to dereference a NULL pointer."
+ },
+ {
+  "cve": "CVE-2002-1912",
+  "cwe": "CWE-476",
+  "text": "SkyStream EMR5000 1.16 through 1.18 does not drop packets or disable the Ethernet interface when the buffers are full, which allows remote attackers to cause a denial of service (null pointer exception and kernel panic) via a large number of packets."
+ },
+ {
+  "cve": "CVE-2003-1000",
+  "cwe": "CWE-476",
+  "text": "xchat 2.0.6 allows remote attackers to cause a denial of service (crash) via a passive DCC request with an invalid ID number, which causes a null dereference."
+ },
+ {
+  "cve": "CVE-2003-1013",
+  "cwe": "CWE-476",
+  "text": "The Q.931 dissector in Ethereal before 0.10.0, and Tethereal, allows remote attackers to cause a denial of service (crash) via a malformed Q.931, which triggers a null dereference."
+ },
+ {
+  "cve": "CVE-2004-0365",
+  "cwe": "CWE-476",
+  "text": "The dissect_attribute_value_pairs function in packet-radius.c for Ethereal 0.8.13 to 0.10.2 allows remote attackers to cause a denial of service (crash) via a malformed RADIUS packet that triggers a null dereference."
+ },
+ {
+  "cve": "CVE-2004-0119",
+  "cwe": "CWE-476",
+  "text": "The Negotiate Security Software Provider (SSP) interface in Windows 2000, Windows XP, and Windows Server 2003, allows remote attackers to cause a denial of service (crash from null dereference) or execute arbitrary code via a crafted SPNEGO NegTokenInit request during authentication protocol selection."
+ },
+ {
+  "cve": "CVE-2004-0389",
+  "cwe": "CWE-476",
+  "text": "RealNetworks Helix Universal Server 9.0.1 and 9.0.2 allows remote attackers to cause a denial of service (crash) via malformed requests that trigger a null dereference, as demonstrated using (1) GET_PARAMETER or (2) DESCRIBE requests."
+ },
+ {
+  "cve": "CVE-2004-0458",
+  "cwe": "CWE-476",
+  "text": "mah-jong before 1.6.2 allows remote attackers to cause a denial of service (server crash) via a missing argument, which triggers a null pointer dereference."
+ },
+ {
+  "cve": "CVE-2004-0079",
+  "cwe": "CWE-476",
+  "text": "The do_change_cipher_spec function in OpenSSL 0.9.6c to 0.9.6k, and 0.9.7a to 0.9.7c, allows remote attackers to cause a denial of service (crash) via a crafted SSL/TLS handshake that triggers a null dereference."
+ },
+ {
+  "cve": "CVE-2005-0772",
+  "cwe": "CWE-476",
+  "text": "VERITAS Backup Exec 9.0 through 10.0 for Windows Servers, and 9.0.4019 through 9.1.307 for Netware, allows remote attackers to cause a denial of service (Remote Agent crash) via (1) a crafted packet in NDMLSRVR.DLL or (2) a request packet with an invalid (non-0) \"Error Status\" value, which triggers a null dereference."
+ },
+ {
+  "cve": "CVE-2005-2459",
+  "cwe": "CWE-476",
+  "text": "The huft_build function in inflate.c in the zlib routines in the Linux kernel before 2.6.12.5 returns the wrong value, which allows remote attackers to cause a denial of service (kernel crash) via a certain compressed file that leads to a null pointer dereference, a different vulnerability than CVE-2005-2458."
+ },
+ {
+  "cve": "CVE-2005-3274",
+  "cwe": "CWE-476",
+  "text": "Race condition in ip_vs_conn_flush in Linux 2.6 before 2.6.13 and 2.4 before 2.4.32-pre2, when running on SMP systems, allows local users to cause a denial of service (null dereference) by causing a connection timer to expire while the connection table is being flushed before the appropriate lock is acquired."
+ },
+ {
+  "cve": "CVE-2006-2661",
+  "cwe": "CWE-476",
+  "text": "ftutil.c in Freetype before 2.2 allows remote attackers to cause a denial of service (crash) via a crafted font file that triggers a null dereference."
+ },
+ {
+  "cve": "CVE-2006-4343",
+  "cwe": "CWE-476",
+  "text": "The get_server_hello function in the SSLv2 client code in OpenSSL 0.9.7 before 0.9.7l, 0.9.8 before 0.9.8d, and earlier versions allows remote servers to cause a denial of service (client crash) via unknown vectors that trigger a null pointer dereference."
+ },
+ {
+  "cve": "CVE-2006-6565",
+  "cwe": "CWE-476",
+  "text": "FileZilla Server before 0.9.22 allows remote attackers to cause a denial of service (crash) via a wildcard argument to the (1) LIST or (2) NLST commands, which results in a NULL pointer dereference, a different set of vectors than CVE-2006-6564.  NOTE: CVE analysis suggests that the problem might be due to a malformed PORT command."
+ },
+ {
+  "cve": "CVE-2007-0887",
+  "cwe": "CWE-476",
+  "text": "axigen 1.2.6 through 2.0.0b1 does not properly parse login credentials, which allows remote attackers to cause a denial of service (NULL dereference and application crash) via a base64-encoded \"*\\x00\" sequence on the imap port (143/tcp)."
+ },
+ {
+  "cve": "CVE-2007-1327",
+  "cwe": "CWE-476",
+  "text": "The SILC_SERVER_CMD_FUNC function in apps/silcd/command.c in silc-server 1.0.2 allows remote attackers to cause a denial of service (NULL dereference and daemon crash) via a request without a cipher algorithm and an invalid HMAC algorithm."
+ },
+ {
+  "cve": "CVE-2007-0039",
+  "cwe": "CWE-476",
+  "text": "The Exchange Collaboration Data Objects (EXCDO) functionality in Microsoft Exchange Server 2000 SP3, 2003 SP1 and SP2, and 2007 allows remote attackers to cause a denial of service (crash) via an Internet Calendar (iCal) file containing multiple X-MICROSOFT-CDO-MODPROPS (MODPROPS) properties in which the second MODPROPS is longer than the first, which triggers a NULL pointer dereference and an unhandled exception."
+ },
+ {
+  "cve": "CVE-2008-1672",
+  "cwe": "CWE-476",
+  "text": "OpenSSL 0.9.8f and 0.9.8g allows remote attackers to cause a denial of service (crash) via a TLS handshake that omits the Server Key Exchange message and uses \"particular cipher suites,\" which triggers a NULL pointer dereference."
+ },
+ {
+  "cve": "CVE-2007-1285",
+  "cwe": "CWE-674",
+  "text": "The Zend Engine in PHP 4.x before 4.4.7, and 5.x before 5.2.2, allows remote attackers to cause a denial of service (stack exhaustion and PHP crash) via deeply nested arrays, which trigger deep recursion in the variable destruction routines."
+ },
+ {
+  "cve": "CVE-2007-3409",
+  "cwe": "CWE-674",
+  "text": "Net::DNS before 0.60, a Perl module, allows remote attackers to cause a denial of service (stack consumption) via a malformed compressed DNS packet with self-referencing pointers, which triggers an infinite loop."
+ },
+ {
+  "cve": "CVE-2016-3627",
+  "cwe": "CWE-674",
+  "text": "The xmlStringGetNodeList function in tree.c in libxml2 2.9.3 and earlier, when used in recovery mode, allows context-dependent attackers to cause a denial of service (infinite recursion, stack consumption, and application crash) via a crafted XML document."
+ },
+ {
+  "cve": "CVE-2017-5839",
+  "cwe": "CWE-674",
+  "text": "The gst_riff_create_audio_caps function in gst-libs/gst/riff/riff-media.c in gst-plugins-base in GStreamer before 1.10.3 does not properly limit recursion, which allows remote attackers to cause a denial of service (stack overflow and crash) via vectors involving nested WAVEFORMATEX."
+ },
+ {
+  "cve": "CVE-2017-0886",
+  "cwe": "CWE-674",
+  "text": "Nextcloud Server before 9.0.55 and 10.0.2 suffers from a Denial of Service attack. Due to an error in the application logic an authenticated adversary may trigger an endless recursion in the application leading to a potential Denial of Service."
+ },
+ {
+  "cve": "CVE-2017-9304",
+  "cwe": "CWE-674",
+  "text": "libyara/re.c in the regexp module in YARA 3.5.0 allows remote attackers to cause a denial of service (stack consumption) via a crafted rule that is mishandled in the _yr_re_emit function."
+ },
+ {
+  "cve": "CVE-2017-9438",
+  "cwe": "CWE-674",
+  "text": "libyara/re.c in the regexp module in YARA 3.5.0 allows remote attackers to cause a denial of service (stack consumption) via a crafted rule (involving hex strings) that is mishandled in the _yr_re_emit function, a different vulnerability than CVE-2017-9304."
+ },
+ {
+  "cve": "CVE-2017-7515",
+  "cwe": "CWE-674",
+  "text": "poppler through version 0.55.0 is vulnerable to an uncontrolled recursion in pdfunite resulting into potential denial-of-service."
+ },
+ {
+  "cve": "CVE-2017-9616",
+  "cwe": "CWE-674",
+  "text": "In Wireshark 2.2.7, overly deep mp4 chunks may cause stack exhaustion (uncontrolled recursion) in the dissect_mp4_box function in epan/dissectors/file-mp4.c."
+ },
+ {
+  "cve": "CVE-2017-9617",
+  "cwe": "CWE-674",
+  "text": "In Wireshark 2.2.7, deeply nested DAAP data may cause stack exhaustion (uncontrolled recursion) in the dissect_daap_one_tag function in epan/dissectors/packet-daap.c in the DAAP dissector."
+ },
+ {
+  "cve": "CVE-2017-9729",
+  "cwe": "CWE-674",
+  "text": "In uClibc 0.9.33.2, there is stack exhaustion (uncontrolled recursion) in the check_dst_limits_calc_pos_1 function in misc/regex/regexec.c when processing a crafted regular expression."
+ },
+ {
+  "cve": "CVE-2017-9766",
+  "cwe": "CWE-674",
+  "text": "In Wireshark 2.2.7, PROFINET IO data with a high recursion depth allows remote attackers to cause a denial of service (stack exhaustion) in the dissect_IODWriteReq function in plugins/profinet/packet-dcerpc-pn-io.c."
+ },
+ {
+  "cve": "CVE-2017-0692",
+  "cwe": "CWE-674",
+  "text": "A denial of service vulnerability in the Android media framework. Product: Android. Versions: 4.4.4, 5.0.2, 5.1.1, 6.0, 6.0.1, 7.0, 7.1.1, 7.1.2. Android ID: A-36725407."
+ },
+ {
+  "cve": "CVE-2017-11164",
+  "cwe": "CWE-674",
+  "text": "In PCRE 8.41, the OP_KETRMAX feature in the match function in pcre_exec.c allows stack exhaustion (uncontrolled recursion) when processing a crafted regular expression."
+ },
+ {
+  "cve": "CVE-2017-11554",
+  "cwe": "CWE-674",
+  "text": "There is a stack consumption vulnerability in the lex function in parser.hpp (as used in sassc) in LibSass 3.4.5. A crafted input will lead to a remote denial of service."
+ },
+ {
+  "cve": "CVE-2017-11556",
+  "cwe": "CWE-674",
+  "text": "There is a stack consumption vulnerability in the Parser::advanceToNextToken function in parser.cpp in LibSass 3.4.5. A crafted input may lead to remote denial of service."
+ },
+ {
+  "cve": "CVE-2017-12964",
+  "cwe": "CWE-674",
+  "text": "There is a stack consumption issue in LibSass 3.4.5 that is triggered in the function Sass::Eval::operator() in eval.cpp. It will lead to a remote denial of service attack."
+ },
+ {
+  "cve": "CVE-2017-16419",
+  "cwe": "CWE-674",
+  "text": "An issue was discovered in Adobe Acrobat and Reader: 2017.012.20098 and earlier versions, 2017.011.30066 and earlier versions, 2015.006.30355 and earlier versions, and 11.0.22 and earlier versions. The issue is a stack exhaustion problem within the JavaScript API, where the computation does not correctly control the amount of recursion that can happen with respect to system resources."
+ },
+ {
+  "cve": "CVE-2017-10910",
+  "cwe": "CWE-674",
+  "text": "MQTT.js 2.x.x prior to 2.15.0 issue in handling PUBLISH tickets may lead to an attacker causing a denial-of-service condition."
+ },
+ {
+  "cve": "CVE-2018-5772",
+  "cwe": "CWE-674",
+  "text": "In Exiv2 0.26, there is a segmentation fault caused by uncontrolled recursion in the Exiv2::Image::printIFDStructure function in the image.cpp file. Remote attackers could leverage this vulnerability to cause a denial of service via a crafted tif file."
+ },
+ {
+  "cve": "CVE-2002-2227",
+  "cwe": "CWE-787",
+  "text": "Buffer underflow in ssldump 0.9b2 and earlier allows remote attackers to cause a denial of service (memory corruption) via a crafted SSLv2 challenge value."
+ },
+ {
+  "cve": "CVE-2003-0870",
+  "cwe": "CWE-787",
+  "text": "Heap-based buffer overflow in Opera 7.11 and 7.20 allows remote attackers to execute arbitrary code via an HREF with a large number of escaped characters in the server name."
+ },
+ {
+  "cve": "CVE-2003-1396",
+  "cwe": "CWE-787",
+  "text": "Heap-based buffer overflow in Opera 6.05 through 7.10 allows remote attackers to cause a denial of service (crash) and possibly execute arbitrary code via a filename with a long extension."
+ },
+ {
+  "cve": "CVE-2004-0398",
+  "cwe": "CWE-787",
+  "text": "Heap-based buffer overflow in the ne_rfc1036_parse date parsing function for the neon library (libneon) 0.24.5 and earlier, as used by cadaver before 0.22, allows remote WebDAV servers to execute arbitrary code on the client."
+ },
+ {
+  "cve": "CVE-2004-0488",
+  "cwe": "CWE-787",
+  "text": "Stack-based buffer overflow in the ssl_util_uuencode_binary function in ssl_util.c for Apache mod_ssl, when mod_ssl is configured to trust the issuing CA, may allow remote attackers to execute arbitrary code via a client certificate with a long subject DN."
+ },
+ {
+  "cve": "CVE-2004-0783",
+  "cwe": "CWE-787",
+  "text": "Stack-based buffer overflow in xpm_extract_color (io-xpm.c) in the XPM image decoder for gtk+ 2.4.4 (gtk2) and earlier, and gdk-pixbuf before 0.22, may allow remote attackers to execute arbitrary code via a certain color string.  NOTE: this identifier is ONLY for gtk+.  It was incorrectly referenced in an advisory for a different issue (CVE-2004-0688)."
+ },
+ {
+  "cve": "CVE-2004-0574",
+  "cwe": "CWE-787",
+  "text": "The Network News Transfer Protocol (NNTP) component of Microsoft Windows NT Server 4.0, Windows 2000 Server, Windows Server 2003, Exchange 2000 Server, and Exchange Server 2003 allows remote attackers to execute arbitrary code via XPAT patterns, possibly related to improper length validation and an \"unchecked buffer,\" leading to off-by-one and heap-based buffer overflows."
+ },
+ {
+  "cve": "CVE-2004-1189",
+  "cwe": "CWE-787",
+  "text": "The add_to_history function in svr_principal.c in libkadm5srv for MIT Kerberos 5 (krb5) up to 1.3.5, when performing a password change, does not properly track the password policy's history count and the maximum number of keys, which can cause an array index out-of-bounds error and may allow authenticated users to execute arbitrary code via a heap-based buffer overflow."
+ },
+ {
+  "cve": "CVE-2004-1287",
+  "cwe": "CWE-787",
+  "text": "Buffer overflow in the error function in preproc.c for NASM 0.98.38 1.2 allows attackers to execute arbitrary code via a crafted asm file, a different vulnerability than CVE-2005-1194."
+ },
+ {
+  "cve": "CVE-2004-0978",
+  "cwe": "CWE-787",
+  "text": "Heap-based buffer overflow in the Hrtbeat.ocx (Heartbeat) ActiveX control for Internet Explorer 5.01 through 6, when users who visit online gaming sites that are associated with MSN, allows remote attackers to execute arbitrary code via the SetupData parameter."
+ },
+ {
+  "cve": "CVE-2005-0560",
+  "cwe": "CWE-787",
+  "text": "Heap-based buffer overflow in the SvrAppendReceivedChunk function in xlsasink.dll in the SMTP service of Exchange Server 2000 and 2003 allows remote attackers to execute arbitrary code via a crafted X-LINK2STATE extended verb request to the SMTP port."
+ },
+ {
+  "cve": "CVE-2006-2362",
+  "cwe": "CWE-787",
+  "text": "Buffer overflow in getsym in tekhex.c in libbfd in Free Software Foundation GNU Binutils before 20060423, as used by GNU strings, allows context-dependent attackers to cause a denial of service (application crash) and possibly execute arbitrary code via a file with a crafted Tektronix Hex Format (TekHex) record in which the length character is not a valid hexadecimal character."
+ },
+ {
+  "cve": "CVE-2006-3897",
+  "cwe": "CWE-787",
+  "text": "Stack overflow in Microsoft Internet Explorer 6 on Windows 2000 allows remote attackers to cause a denial of service (application crash) by creating an NMSA.ASFSourceMediaDescription.1 ActiveX object with a long dispValue property."
+ },
+ {
+  "cve": "CVE-2006-3945",
+  "cwe": "CWE-787",
+  "text": "The CSS functionality in Opera 9 on Windows XP SP2 allows remote attackers to cause a denial of service (crash) by setting the background property of a DHTML element to a long http or https URL, which triggers memory corruption."
+ },
+ {
+  "cve": "CVE-2006-4482",
+  "cwe": "CWE-787",
+  "text": "Multiple heap-based buffer overflows in the (1) str_repeat and (2) wordwrap functions in ext/standard/string.c in PHP before 5.1.5, when used on a 64-bit system, have unspecified impact and attack vectors, a different vulnerability than CVE-2006-1990."
+ },
+ {
+  "cve": "CVE-2006-6576",
+  "cwe": "CWE-787",
+  "text": "Heap-based buffer overflow in Golden FTP Server (goldenftpd) 1.92 allows remote attackers to cause a denial of service (application crash) and possibly execute arbitrary code via a long PASS command. NOTE: it was later reported that 4.70 is also affected.  NOTE: the USER vector is already covered by CVE-2005-0634."
+ },
+ {
+  "cve": "CVE-2007-0957",
+  "cwe": "CWE-787",
+  "text": "Stack-based buffer overflow in the krb5_klog_syslog function in the kadm5 library, as used by the Kerberos administration daemon (kadmind) and Key Distribution Center (KDC), in MIT krb5 before 1.6.1 allows remote authenticated users to execute arbitrary code and modify the Kerberos key database via crafted arguments, possibly involving certain format string specifiers."
+ },
+ {
+  "cve": "CVE-2007-2356",
+  "cwe": "CWE-787",
+  "text": "Stack-based buffer overflow in the set_color_table function in sunras.c in the SUNRAS plugin in Gimp 2.2.14 allows user-assisted remote attackers to execute arbitrary code via a crafted RAS file."
+ },
+ {
+  "cve": "CVE-2007-1320",
+  "cwe": "CWE-787",
+  "text": "Multiple heap-based buffer overflows in the cirrus_invalidate_region function in the Cirrus VGA extension in QEMU 0.8.2, as used in Xen and possibly other products, might allow local users to execute arbitrary code via unspecified vectors related to \"attempting to mark non-existent regions as dirty,\" aka the \"bitblt\" heap overflow."
+ },
+ {
+  "cve": "CVE-2007-2798",
+  "cwe": "CWE-787",
+  "text": "Stack-based buffer overflow in the rename_principal_2_svc function in kadmind for MIT Kerberos 1.5.3, 1.6.1, and other versions allows remote authenticated users to execute arbitrary code via a crafted request to rename a principal."
+ }
+]

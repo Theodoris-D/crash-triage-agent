@@ -99,6 +99,40 @@ debugger output (`gdb_note`) are detected, versus 35 of 36 in source comments an
 sanitizer notes. Next step: paraphrased and indirect payloads, all 12 cases, and a
 weaker model.
 
+### CWE retrieval: keyword vs BM25 vs Hugging Face embeddings
+
+The `cwe_lookup` tool started as keyword overlap over 18 hand-written CWE entries.
+[`eval/retrieval_eval.py`](eval/retrieval_eval.py) compares it offline (no LLM,
+no API cost) with BM25, three Hugging Face sentence-embedding models stored in
+ChromaDB, a BM25 + embedding hybrid (reciprocal-rank fusion) and a cross-encoder
+reranker, on two query sets with every literal CWE id stripped: **288 real NVD CVE
+descriptions** (single-label, 15 CWEs) and the **24 root-cause explanations the
+agent itself wrote** in the two Haiku 5.5 runs. Full table:
+[`eval/retrieval_report.md`](eval/retrieval_report.md).
+
+| top-1 CWE (curated 18 entries) | NVD (n=288) | agent explanations (n=24) |
+|---|---|---|
+| keyword (old tool) | 52% [47-58] | 71% [51-85] |
+| BM25 | 50% [45-56] | 92% [74-98] |
+| bge-small-en-v1.5 (dense) | 58% [52-63] | 92% [74-98] |
+| **hybrid BM25 + bge-small** | **61% [55-66]**, McNemar p=0.006 | **96% [80-99]**, p=0.031 |
+| bge-small + bge-reranker-base | 75% [69-79] | 25% [12-45] |
+
+What it shows:
+- **The hybrid wins on both sets** and is significantly better than the old tool
+  on paired queries (+48/-24 on NVD, +6/-0 on the agent's explanations). It is
+  now available as `TRIAGE_CWE_RETRIEVER=hybrid`; keyword stays the default so CI
+  needs no model download.
+- **More data made retrieval worse.** Indexing the full MITRE catalogue (956
+  weaknesses) drops every retriever, e.g. the hybrid to 28% / 29% top-1: many
+  near-duplicate siblings compete with the right entry. The curated set wins.
+- **The reranker does not transfer.** The cross-encoder is the best on short CVE
+  descriptions (75%) but collapses on the agent's longer explanations (25%), and
+  costs ~1 s per query. Not yet explained; it is not used.
+- Limits: NVD labels are noisy (often one level off, hence the "one-hop" column in
+  the report); n=24 for agent queries is small; retrieval accuracy is not CWE
+  accuracy of the agent end to end, which needs a new real-model run.
+
 ## Costs
 
 The benchmark is small, so a full run is cheap and the right model axis is

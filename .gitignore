@@ -18,3 +18,7 @@ eval/report.md
 *.asan
 .pytest_cache/
 eval/*.db-journal
+
+# retrieval: re-downloadable inputs and local vector index
+data/raw/
+data/chroma/

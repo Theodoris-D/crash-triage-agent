@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
+import os
 import re
 
 from . import casedb, sandbox
@@ -128,40 +129,49 @@ def search_source(case_id: str, pattern: str, path: str = "bug.c") -> ToolOutput
     return ToolOutput("\n".join(hits) if hits else "<no matches>", untrusted=True)
 
 
-_CWE_KB = None
+_RETRIEVER = None
+_DOCS = None
 
 
-def _load_kb():
-    global _CWE_KB
-    if _CWE_KB is None:
-        _CWE_KB = json.loads((KNOWLEDGE_DIR / "cwe.json").read_text())
-    return _CWE_KB
+def _retriever():
+    """Pick the cwe_lookup backend once per process.
+
+    TRIAGE_CWE_RETRIEVER=keyword (default, dependency-free, used by CI),
+    dense (Hugging Face bge-small-en-v1.5 embeddings in ChromaDB) or hybrid
+    (BM25 + dense, reciprocal-rank fusion: the best retriever in the evaluation). Both search the
+    18 curated entries: eval/retrieval_report.md shows that the full MITRE
+    catalogue (956 entries) makes every retriever worse on these queries. If the
+    optional `rag` dependencies are missing, dense falls back to keyword.
+    """
+    global _RETRIEVER, _DOCS
+    if _RETRIEVER is None:
+        from . import retrieval
+        _DOCS = {d.cwe: d for d in retrieval.load_curated(KNOWLEDGE_DIR / "cwe.json")}
+        docs = list(_DOCS.values())
+        mode = os.environ.get("TRIAGE_CWE_RETRIEVER", "keyword").lower()
+        try:
+            if mode == "dense":
+                _RETRIEVER = retrieval.DenseRetriever(docs, "BAAI/bge-small-en-v1.5")
+            elif mode == "hybrid":
+                _RETRIEVER = retrieval.HybridRetriever(
+                    retrieval.BM25Retriever(docs),
+                    retrieval.DenseRetriever(docs, "BAAI/bge-small-en-v1.5"))
+            else:
+                _RETRIEVER = retrieval.KeywordRetriever(docs)
+        except ImportError:
+            _RETRIEVER = retrieval.KeywordRetriever(docs)
+    return _RETRIEVER
 
 
 def cwe_lookup(query: str, k: int = 3) -> ToolOutput:
     """Retrieve the most relevant CWE entries (trusted internal knowledge base)."""
-    kb = _load_kb()
-    q = set(re.findall(r"[a-z0-9]+", query.lower()))
-    scored = []
-    for e in kb:
-        hay = " ".join([e["name"], " ".join(e["aliases"]),
-                        " ".join(e["keywords"]), e["summary"]]).lower()
-        toks = set(re.findall(r"[a-z0-9]+", hay))
-        overlap = len(q & toks)
-        # direct id or name mention is a strong signal
-        if e["cwe"].lower() in query.lower():
-            overlap += 10
-        if e["name"].lower() in query.lower():
-            overlap += 5
-        if overlap:
-            scored.append((overlap, e))
-    scored.sort(key=lambda x: x[0], reverse=True)
-    top = [e for _, e in scored[:max(1, k)]]
-    if not top:
+    hits = _retriever().search(query, max(1, k))
+    if not hits:
         return ToolOutput("<no matching CWE entries>")
     out = []
-    for e in top:
-        out.append(f"{e['cwe']} {e['name']}\n  {e['summary']}\n  fix: {e['fix_hint']}")
+    for cwe, _ in hits:
+        e = _DOCS[cwe]
+        out.append(f"{e.cwe} {e.name}\n  {e.summary}\n  fix: {e.fix_hint}")
     return ToolOutput("\n".join(out), untrusted=False)
 
 

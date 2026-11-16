@@ -1,0 +1,146 @@
+[
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c01",
+  "cwe": "CWE-121",
+  "text": "main() copies a line read from stdin (up to 255 chars) into a 16-byte stack array `buf` using unbounded strcpy(buf, src). Any input longer than 15 characters overflows buf and corrupts the adjacent stack array `line`. ASan reports a WRITE of 122-123 bytes into buf at offset 48 in the frame, partially underflowing into 'line'. Fix: bound the copy to sizeof(buf) with snprintf (or validate length first). The patch compiled, stopped the crash on the crashing input, and passed both functional tests ('bob', 'eve')."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c02",
+  "cwe": "CWE-122",
+  "text": "The program reads an integer n from stdin and allocates `malloc(n)` bytes, then writes `n` bytes with memset and sets `b[n] = '!'`. Index n is one past the end of an n-byte allocation, so the write at line 13 is a 1-byte heap overflow. Reproduced with input \"100\": ASan reports a WRITE of size 1 located 0 bytes right of a 100-byte region allocated at line 11. The fix allocates n+1 bytes so the terminator-style write at b[n] is in bounds, and checks the malloc result. For n=0 this gives a 1-byte buffer, so b[0] is valid. propose_fix verified it: compiles, no crash on the crashing input, and 2/2 functional tests pass."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c03",
+  "cwe": "CWE-416",
+  "text": "When stdin is the line \"free\", line 10 calls free(p) on the strdup'd buffer. Line 11 then calls strlen(p) on the freed memory, which is a heap-use-after-free read. ASan confirms the read at bug.c:11 and the free at bug.c:10. The fix removes the premature free so p is only released once, after its last use. The patched build no longer crashes on the crashing input, and it passes 2/2 functional tests.</explanation>\n<parameter name=\"confidence\">0.97"
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c04",
+  "cwe": "CWE-415",
+  "text": "When stdin is \"twice\", line 12 frees the malloc'd buffer `p` inside the strcmp branch, and line 13 then unconditionally frees `p` again. ASan reports a double-free on the 32-byte region first freed at line 12 and freed again at line 13 (SIGABRT). The fix removes the redundant conditional free on line 12, leaving a single free on every path. propose_fix confirmed the crash no longer occurs and both functional tests pass ('once', 'ok' both print 'done')."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c05",
+  "cwe": "CWE-476",
+  "text": "The program reads one line from stdin and calls lookup(), which scans a table of keys (\"alpha\", \"beta\") and returns NULL when no key matches. main() does not check the result and evaluates row->value at line 19. Input such as \"gamma\" makes row NULL, so the member access is a null pointer dereference. UBSan reports it as \"member access within null pointer of type 'struct row'\" and the process aborts with SIGABRT. The fix adds a NULL check after lookup() that reports an unknown key and returns a nonzero status. propose_fix verified it: it compiles, the \"gamma\" input no longer crashes, and the alpha and beta functional tests pass."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c06",
+  "cwe": "CWE-369",
+  "text": "The program reads a line from stdin, parses it with atoi() into n, and computes total / n (total = 100) without checking n. When input parses to 0 (e.g. \"0\\n\", or any non-numeric text), the division by zero traps. UBSan reports \"division by zero\" at bug.c:11, and the process aborts with SIGABRT. Fix: reject n == 0 before the division. The proposed patch was verified: it compiles, no longer crashes on the crashing input, and passes 2/2 functional tests (inputs 4 -> avg=25, 2 -> avg=50)."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c07",
+  "cwe": "CWE-674",
+  "text": "Uncontrolled recursion. Input \"up\" calls depth_up(1), which recurses as depth_up(n+1). n never equals 0, so the base case is unreachable and the stack exhausts (ASan: stack-overflow in depth_up, bug.c:10/12). Large positive inputs such as 100000000 drive depth() to recurse once per unit of n (bug.c:6/8), which also overflows the stack. The fix replaces depth() with a constant-time expression and rejects the non-terminating \"up\" mode with an error. The patch was verified: it compiles, no longer crashes on the crashing input, and passes 2/2 functional tests. Note that the verifier's tests only cover small inputs (3 and 0), and the semantics of \"up\" are a design choice I made, not something taken from the spec."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c08",
+  "cwe": "CWE-125",
+  "text": "The program reads an integer from stdin with atoi() and passes it to days_in(), which returns months[i] without any bounds check. The months array has 13 entries (indices 0..12). Input \"100\" causes an out-of-bounds read at bug.c:9; UBSan reports \"index 100 out of bounds for type 'int [13]'\" and the process aborts. The crash is a read past the end of a static array, not a stack overflow, so the crash_class label is a best fit for the out-of-bounds array access. The fix adds a range check (0 <= i < 13) that returns 0 for invalid months. propose_fix verified it: the crashing input no longer crashes, and both functional tests pass."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c09",
+  "cwe": "CWE-190",
+  "text": "The program reads a count from stdin and computes the allocation size as `unsigned bytes = count * 4`. For count = 1073741824 (2^30), the 32-bit multiplication wraps to 0, so malloc(0) returns a minimal 1-byte heap chunk. The zero-fill loop at line 12 then writes count 4-byte ints, overflowing the heap buffer almost immediately. ASan confirmed a 4-byte WRITE at bug.c:12, 0 bytes past a 1-byte allocation made at bug.c:11. The root cause is the unchecked integer overflow in the size computation (), which leads to the heap overflow (). The verified fix replaces malloc+manual zeroing with calloc(count, sizeof(int)), which checks the multiplication for overflow, and removes the out-of-bounds zero-fill loop. It also handles count==0 and allocation failure. propose_fix reports the crashing input no longer crashes and both functional tests pass. Two earlier candidate patches were rejected: one did not compile (missing stdint.h for SIZE_MAX), and one still crashed."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c10",
+  "cwe": "CWE-193",
+  "text": "The program reads an integer N from stdin (\"reverse N\") and fills a 16-byte stack array `out[16]` with the first N letters in reverse. The loop `for (int i = 0; i <= n; i++)` writes indices 0..n, and `out[n] = 0` also writes index n. Since N is not bounded by the buffer size, any N >= 16 writes past the end of `out`. UBSan reports \"index 16 out of bounds for type 'char [16]'\" at bug.c:14 for input \"reverse 20\". The off-by-one `<=` () is the immediate error, but the root cause is the missing check of N against the buffer capacity. The verified fix clamps n to 15 (so n chars plus the NUL fit in 16 bytes) and changes the loop to `i < n`. Note that the clamp changes output for N >= 16: it now prints 15 letters rather than crashing. If the intended behavior for large N is different (for example, rejecting the input), the fix should be adjusted to match."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c11",
+  "cwe": "CWE-195",
+  "text": "main() parses an attacker-controlled integer from stdin with atoi() into `len` and passes it directly as the size to memcpy(dst, src, len), where dst and src are 8-byte stack arrays. A value larger than 8 (e.g. 100) writes past the end of dst, and a negative value (e.g. -1) is converted to a huge size_t. ASan reports this inside memcpy at bug.c:11 as memcpy-param-overlap (for 100, since the oversized copy overruns into src) and negative-size-param (for -1). The crash class is stack buffer overflow via an unchecked length (; the signed-to-unsigned conversion of a negative length, , is a contributing factor). The proposed fix clamps negative lengths to 0 and caps the length at sizeof(dst) before memcpy. propose_fix verified it: it compiles, no longer crashes on the crashing input, and passes the functional tests for inputs 3 and 5."
+ },
+ {
+  "run_id": "20261110-141440-bc9f4b",
+  "case_id": "c12",
+  "cwe": "CWE-129",
+  "text": "The \"set IDX VAL\" handler checks only the upper bound (idx < 4) before writing slots[idx]. A negative IDX (e.g. \"set -3 7\") passes the check and writes before the start of the local array slots[4], a stack buffer underwrite. UBSan reports \"index -3 out of bounds for type 'int [4]'\" at bug.c:12, and the process aborts. Line 13 also reads slots[idx] without any check. The verified fix rejects any index outside [0, 4) before the write and read. propose_fix confirmed it compiles, no longer crashes on the crashing input, and passes both functional tests. The crash class is labeled stack-buffer-overflow because the slot array is a local; the underlying weakness is an underwrite (). Note: the crash is only reachable with a negative index, which the empty-stdin run does not trigger."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c01",
+  "cwe": "CWE-121",
+  "text": "main() reads up to 255 bytes into `line` with fgets, then calls strcpy(buf, src) at line 12, where buf is only 16 bytes on the stack. An input longer than 15 characters overflows buf. The ASan report shows a 107-byte write into buf (offset 48 of the frame), which spills into the adjacent `line` array and beyond, and the crash occurs in __interceptor_strcpy called from main at bug.c:12. The heap copy from strdup does not bound the length, so it does not help. Fix: replace strcpy with a bounded copy, snprintf(buf, sizeof buf, \"%s\", src). The patch compiled, stopped the crash on the crashing input, and passed both functional tests ('bob', 'eve')."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c02",
+  "cwe": "CWE-122",
+  "text": "main() reads a size n from stdin via atoi and calls malloc(n). It then writes memset(b, 'x', n) (in bounds) and b[n] = '!' at line 13. Index n is one past the end of an n-byte allocation, so the 1-byte write overflows the heap region. ASan confirms a WRITE of size 1 at bug.c:13, 0 bytes right of a 16-byte region allocated at bug.c:11, for input \"16\". Empty input does not trigger it. The fix allocates n+1 bytes so the terminator-style write at index n is in bounds. n=0 is also safe because malloc(1) is used. propose_fix verified the change: it compiles, no longer crashes on the crashing input, and passes 2/2 functional tests."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c03",
+  "cwe": "CWE-416",
+  "text": "When stdin is exactly \"free\", line 10 calls free(p) on the strdup'd buffer. Line 11 then calls strlen(p) on the freed memory, which ASan reports as a heap-use-after-free READ of size 2. The buffer was freed at line 10 and allocated at line 9. The fix removes the early conditional free, so p is released only once at line 12 after its last use. The patched version compiles, no longer crashes on the \"free\" input, and passes both functional tests ('keep' -> len=4, 'hi' -> len=2).</explanation>\n<parameter name=\"confidence\">0.97"
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c04",
+  "cwe": "CWE-415",
+  "text": "When stdin is exactly \"twice\", the program calls free(p) at line 12 and then unconditionally calls free(p) again at line 13. ASan reports a double free of a 32-byte malloc'd region (first freed at line 12, second free at line 13). The crash is deterministic for that input (SIGABRT). The fix removes the conditional early free so the pointer is freed exactly once on every path. propose_fix compiled the patch, the crashing input no longer crashes, and both functional tests passed."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c05",
+  "cwe": "CWE-476",
+  "text": "When stdin contains a key not in the table (e.g. \"gamma\"), lookup() returns NULL after scanning the sentinel-terminated table. main() passes that result straight to row->value on line 19 without a NULL check, so the program dereferences a NULL pointer. UBSan reports \"member access within null pointer of type 'struct row'\" and the process aborts (SIGABRT under the sanitizer build). Empty input returns 0 early and does not reproduce. The fix checks row for NULL before the access and returns an error. propose_fix verified it: it compiles, the crashing input no longer crashes, and both functional tests (alpha, beta) pass."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c06",
+  "cwe": "CWE-369",
+  "text": "The program parses an integer n from stdin with atoi() and computes total / n without validating n. When the input is \"0\" (or any non-numeric string, which atoi maps to 0), the division by zero at line 11 traps. UBSan reports \"division by zero\" and the process aborts with SIGABRT. The fix rejects n <= 0 before the division and returns a nonzero exit status. propose_fix confirmed it compiles, stops the crash on the crashing input, and passes 2/2 functional tests (n=4 gives avg=25, n=2 gives avg=50).</explanation>\n<parameter name=\"confidence\">0.95"
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c07",
+  "cwe": "CWE-674",
+  "text": "Input \"up\" makes main call depth_up(1). depth_up recurses with n+1, so n moves away from the base case n==0 and never reaches it. Recursion continues until the stack is exhausted; ASan reports a stack-overflow in depth_up (bug.c:10/12) and the process aborts with SIGABRT. The fix changes the recursive step to n-1 so the recursion converges to the base case. propose_fix confirmed that the crashing input no longer crashes, and that both functional tests pass (inputs '3' and '0')."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c08",
+  "cwe": "CWE-125",
+  "text": "main() reads an integer from stdin via atoi() and passes it to days_in(i), which returns months[i] without any bounds check. months is a 13-element static const int array, so any index outside 0..12 reads out of bounds. Inputs 100 and -100 both trigger UBSan 'index out of bounds for type int [13]' and abort. The fix adds a range check (0 <= i < 13) and returns 0 for out-of-range values. The patch compiled, stopped the crash on the crashing input, and passed both functional tests (inputs 1 and 2 give days=31 and days=28). Note: the exact crashing input was not supplied on stdin; I reproduced with 100, which is representative of the bug class. Reading the array is a read, not a write, so the class is an out-of-bounds read of a global, reported here as global-buffer-overflow."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c09",
+  "cwe": "CWE-190",
+  "text": "Input count=1073741824 (2^30). Line 10 computes `count * 4` in 32-bit unsigned, which wraps to 0. malloc(0) under ASan yields a 1-byte allocation (reported at bug.c:11). The zero-fill loop at line 12 then writes count ints (4 bytes each) far past that allocation, giving a heap-buffer-overflow WRITE of size 4 at bug.c:12. The root cause is the unchecked 32-bit multiplication that feeds malloc (integer wraparound, ), which leads to the heap overflow (). The proposed fixes use an overflow-checked size computation (size_t with a SIZE_MAX bound, or calloc(count, sizeof(int))). Both compile and pass the 2 functional tests, but neither stopped the crash on the trigger input. The patched run still aborts with SIGABRT, and I did not observe the patched build's diagnostic, so the fix is not verified. Also, with a 2^30 count the program legitimately needs a 4 GB allocation, which ASan may refuse on this host, so the residual abort may come from allocation failure rather than the overflow."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c10",
+  "cwe": "CWE-193",
+  "text": "The program reads an integer N from the input line \"reverse N\" and fills a stack array `char out[16]` in a loop `for (i = 0; i <= n; i++) out[i] = ...`, then writes `out[n] = 0`. N is attacker-controlled and unchecked against the buffer size, so any N >= 16 writes past the end of `out`. With input \"reverse 20\" the sanitizer reports \"index 16 out of bounds for type 'char [16]'\" at bug.c:14 and the process aborts with SIGABRT. The empty input exits cleanly, so the bug is only triggered by large N. The fix enlarges the buffer to 27 bytes (26 letters plus terminator) and rejects N > 26, which keeps every write in bounds. propose_fix verified that the crashing input no longer crashes and that both functional tests pass."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c11",
+  "cwe": "CWE-195",
+  "text": "main() reads a line from stdin and parses it with atoi() into `len`, which is unvalidated. `memcpy(dst, src, len)` at line 11 copies `len` bytes into the 8-byte stack array `dst` (and reads `len` bytes from the 8-byte `src`). With input \"100\", the copy runs well past both arrays. ASan reports this as memcpy-param-overlap because the oversized copy overlaps the neighbouring stack objects (src and dst are adjacent in the frame), so the overlap report is a symptom of the same out-of-bounds length. A negative len converts to a huge size_t and would also overflow. Fix: reject len < 0 or len > sizeof(dst) before the memcpy. The proposed patch was verified: it compiles, no longer crashes on the crashing input, and passes 2/2 functional tests."
+ },
+ {
+  "run_id": "20261115-214207-6c443d",
+  "case_id": "c12",
+  "cwe": "CWE-129",
+  "text": "The input \"set IDX VAL\" is parsed with sscanf into a signed int idx. The only bounds check is `idx < 4`, which rejects large indices but accepts negative ones. With idx = -1, `slots[idx] = val` writes to memory before the local array slots[4] on the stack. UBSan reports \"index -1 out of bounds for type 'int [4]'\" at bug.c:12 and the process aborts. The fix replaces the one-sided check with `if (idx < 0 || idx >= 4) return 0;` before the write. propose_fix verified it: it compiles, the crashing input no longer crashes, and both functional tests pass. The crash class is a stack underwrite, which I've labelled stack-buffer-overflow to match the enum; strictly it is a write before the start of the buffer."
+ }
+]
